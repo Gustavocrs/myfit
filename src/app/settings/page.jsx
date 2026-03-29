@@ -1,17 +1,18 @@
 "use client";
 
-import {useState, useContext} from "react";
+import {useState, useContext, useEffect} from "react";
 import Header from "@/components/Header";
 import {Switch} from "@/components/Switch";
 import {Button} from "@/components/Button";
 import {Input} from "@/components/Input";
-import {FiMoon, FiTrash2, FiLogOut, FiPlusCircle} from "react-icons/fi";
+import {FiMoon, FiTrash2, FiLogOut, FiPlusCircle, FiEye} from "react-icons/fi";
 import {generateWorkout} from "@/utils/generateWorkout";
 import {useRouter} from "next/navigation";
 import {AuthContext} from "@/context/AuthContext";
 
 const SettingsPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [showAllWorkouts, setShowAllWorkouts] = useState(false);
   const [showWorkoutForm, setShowWorkoutForm] = useState(false);
   const [workoutConfig, setWorkoutConfig] = useState({
     experience: "",
@@ -20,6 +21,19 @@ const SettingsPage = () => {
   });
   const router = useRouter();
   const {logout} = useContext(AuthContext);
+
+  useEffect(() => {
+    const savedSetting = localStorage.getItem(
+      "myfit_settings_show_all_workouts",
+    );
+    setShowAllWorkouts(savedSetting === "true");
+  }, []);
+
+  const handleShowAllWorkoutsToggle = () => {
+    const newValue = !showAllWorkouts;
+    setShowAllWorkouts(newValue);
+    localStorage.setItem("myfit_settings_show_all_workouts", String(newValue));
+  };
 
   // Mock handlers for now
   const handleClearData = () => {
@@ -54,6 +68,9 @@ const SettingsPage = () => {
     const newWorkoutPlan = generateWorkout(workoutConfig, trackingData);
 
     localStorage.setItem("myfit_workout_plan", JSON.stringify(newWorkoutPlan));
+    // Força a exibição de todos os treinos após a geração para melhor UX
+    localStorage.setItem("myfit_settings_show_all_workouts", "true");
+
     setShowWorkoutForm(false);
 
     router.push("/workouts"); // Redireciona o usuário para ver a nova grade
@@ -80,6 +97,18 @@ const SettingsPage = () => {
             <Switch
               checked={isDarkMode}
               onChange={() => setIsDarkMode(!isDarkMode)}
+            />
+          </div>
+          <div className="flex items-center justify-between mt-2 border-t border-slate-100 pt-3">
+            <div className="flex items-center gap-3">
+              <FiEye size={20} className="text-slate-600" />
+              <span className="font-semibold text-slate-800">
+                Ver todos os treinos
+              </span>
+            </div>
+            <Switch
+              checked={showAllWorkouts}
+              onChange={handleShowAllWorkoutsToggle}
             />
           </div>
         </div>

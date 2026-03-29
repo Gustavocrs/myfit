@@ -1,25 +1,21 @@
 import React from "react";
-import {Backdrop, CircularProgress} from "@mui/material";
 
 /**
  * Componente global de Loading (Overlay).
- * Utiliza MUI Backdrop para sobrepor a interface com um z-index alto.
+ * Utiliza Tailwind CSS para sobrepor a interface com um z-index alto.
  */
 const Loading = ({open = true, message = "Carregando..."}) => {
+  if (!open) return null;
+
   return (
-    <Backdrop
-      sx={{color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1}}
-      open={open}
-    >
-      <div className="flex flex-col items-center justify-center gap-4">
-        <CircularProgress color="inherit" size={60} thickness={4} />
-        {message && (
-          <span className="text-lg font-semibold tracking-wide animate-pulse">
-            {message}
-          </span>
-        )}
-      </div>
-    </Backdrop>
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-sm text-white">
+      <div className="w-14 h-14 border-4 border-slate-300 border-t-orange-500 rounded-full animate-spin mb-4 shadow-md"></div>
+      {message && (
+        <span className="text-lg font-semibold tracking-wide animate-pulse">
+          {message}
+        </span>
+      )}
+    </div>
   );
 };
 

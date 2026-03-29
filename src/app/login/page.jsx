@@ -28,8 +28,9 @@ const LoginPage = () => {
         <Header />
         <div className="bg-white p-8 rounded-xl shadow-md border border-slate-200 mt-8">
           <h2 className="text-xl font-bold text-slate-800 mb-2">Bem-vindo!</h2>
-          <p className="text-slate-500 mb-6">
-            Acesse sua conta para continuar.
+          <p className="text-slate-500 mb-6 text-sm leading-relaxed">
+            Faça login com sua conta Google para gerenciar seus treinos e
+            acompanhar sua evolução.
           </p>
           <Button wfull onClick={signInWithGoogle}>
             <FcGoogle size={24} className="mr-3" />
