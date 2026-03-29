@@ -1,48 +1,140 @@
 "use client";
 
-import {useState} from "react";
+import {useState, useEffect, useContext} from "react";
 import Header from "@/components/Header";
-import {FiSave, FiCamera, FiActivity, FiSliders} from "react-icons/fi";
+import {
+  FiSave,
+  FiCamera,
+  FiActivity,
+  FiSliders,
+  FiPlusCircle,
+  FiArrowLeft,
+  FiTrash2,
+} from "react-icons/fi";
 import {Input} from "@/components/Input";
 import {Button} from "@/components/Button";
+import {AuthContext} from "@/context/AuthContext";
+import {db} from "@/lib/firebase";
+import {doc, getDoc, setDoc} from "firebase/firestore";
 
 const TrackingPage = () => {
   const [activeTab, setActiveTab] = useState("bio");
-  const [photoPreview, setPhotoPreview] = useState(null);
+  const [evaluations, setEvaluations] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentEval, setCurrentEval] = useState(null);
+  const {user} = useContext(AuthContext);
 
-  // Gerenciamento de Estado para os formulários
-  const [bioData, setBioData] = useState({
-    peso: "",
-    massaMuscular: "",
-    gorduraCorporal: "",
-    gorduraVisceral: "",
-  });
+  useEffect(() => {
+    const fetchEvals = async () => {
+      if (user?.uid) {
+        try {
+          const docRef = doc(db, "evaluations", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists() && docSnap.data().history) {
+            setEvaluations(docSnap.data().history);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar avaliações:", error);
+        }
+      }
+    };
+    fetchEvals();
+  }, [user]);
 
-  const [medidasData, setMedidasData] = useState({
-    torax: "",
-    cintura: "",
-    abdomen: "",
-    quadril: "",
-    bracoDir: "",
-    bracoEsq: "",
-    coxaDir: "",
-    coxaEsq: "",
-    pantDir: "",
-    pantEsq: "",
-  });
-
-  const handleBioChange = (e) => {
-    setBioData({...bioData, [e.target.name]: e.target.value});
+  const handleNewEval = () => {
+    const today = new Date();
+    const dateStr = today.toLocaleDateString("pt-BR");
+    setCurrentEval({
+      id: Date.now().toString(),
+      date: dateStr,
+      bio: {
+        peso: "",
+        massaMuscular: "",
+        gorduraCorporal: "",
+        gorduraVisceral: "",
+      },
+      medidas: {
+        torax: "",
+        cintura: "",
+        abdomen: "",
+        quadril: "",
+        bracoDir: "",
+        bracoEsq: "",
+        coxaDir: "",
+        coxaEsq: "",
+        pantDir: "",
+        pantEsq: "",
+      },
+      photoPreview: null,
+    });
+    setIsEditing(true);
+    setActiveTab("bio");
   };
 
-  const handleMedidasChange = (e) => {
-    setMedidasData({...medidasData, [e.target.name]: e.target.value});
+  const handleEditEval = (ev) => {
+    setCurrentEval(ev);
+    setIsEditing(true);
+    setActiveTab("bio");
+  };
+
+  const handleNestedChange = (category, field, value) => {
+    setCurrentEval((prev) => ({
+      ...prev,
+      [category]: {
+        ...prev[category],
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleSaveEval = async () => {
+    let updated;
+    const existingIdx = evaluations.findIndex((e) => e.id === currentEval.id);
+    if (existingIdx >= 0) {
+      updated = [...evaluations];
+      updated[existingIdx] = currentEval;
+    } else {
+      updated = [currentEval, ...evaluations]; // Nova sempre em primeiro
+    }
+
+    setEvaluations(updated);
+
+    if (user?.uid) {
+      try {
+        await setDoc(doc(db, "evaluations", user.uid), {history: updated});
+      } catch (error) {
+        console.error("Erro ao salvar avaliação:", error);
+      }
+    }
+
+    alert("Avaliação salva com sucesso!");
+    setIsEditing(false);
+    setCurrentEval(null);
+  };
+
+  const handleDeleteEval = async (id, e) => {
+    e.stopPropagation(); // Evita abrir o modo de edição ao clicar na lixeira
+    if (window.confirm("Deseja realmente excluir esta avaliação?")) {
+      const updated = evaluations.filter((ev) => ev.id !== id);
+      setEvaluations(updated);
+      if (user?.uid) {
+        try {
+          await setDoc(doc(db, "evaluations", user.uid), {history: updated});
+        } catch (error) {
+          console.error("Erro ao excluir avaliação:", error);
+        }
+      }
+    }
   };
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setPhotoPreview(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCurrentEval((prev) => ({...prev, photoPreview: reader.result}));
+      };
+      reader.readAsDataURL(file); // Converte para Base64 para salvar no Firebase junto
     }
   };
 

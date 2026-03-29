@@ -1,11 +1,14 @@
 "use client";
 
-import {useState, useEffect, useMemo} from "react";
+import {useState, useEffect, useContext} from "react";
 import Header from "@/components/Header";
 import DayDivider from "@/components/DayDivider";
 import SectionLabel from "@/components/SectionLabel";
 import ExerciseCard from "@/components/ExerciseCard";
 import Loading from "@/components/Loading";
+import {AuthContext} from "@/context/AuthContext";
+import {db} from "@/lib/firebase";
+import {doc, getDoc, setDoc} from "firebase/firestore";
 
 // A constante foi movida para fora para ser usada como estado inicial.
 // No futuro, isso virá de uma chamada de API para o Firebase.
@@ -16,19 +19,28 @@ const WorkoutsPage = () => {
   const [loading, setLoading] = useState(true);
   const [activeWorkoutId, setActiveWorkoutId] = useState(null);
   const [showAllWorkouts, setShowAllWorkouts] = useState(false);
+  const {user} = useContext(AuthContext);
 
   // Simula o carregamento dos dados do treino ao montar o componente.
   useEffect(() => {
-    setTimeout(() => {
+    const fetchWorkouts = async () => {
       const showAllSetting =
         localStorage.getItem("myfit_settings_show_all_workouts") === "true";
-      // Tenta buscar o treino gerado dinamicamente no Settings
-      const savedWorkout = localStorage.getItem("myfit_workout_plan");
 
-      if (savedWorkout) {
-        setWorkouts(JSON.parse(savedWorkout));
+      if (user?.uid) {
+        try {
+          const docRef = doc(db, "workoutPlans", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists() && docSnap.data().plans?.length > 0) {
+            setWorkouts(docSnap.data().plans);
+          } else {
+            setWorkouts(INITIAL_WORKOUT_DATA);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar treinos do Firebase:", error);
+          setWorkouts(INITIAL_WORKOUT_DATA);
+        }
       } else {
-        // Fallback: Se não existe treino criado, carrega o mock
         setWorkouts(INITIAL_WORKOUT_DATA);
       }
 
@@ -53,8 +65,9 @@ const WorkoutsPage = () => {
 
       setActiveWorkoutId(todayWorkoutId);
       setLoading(false);
-    }, 500); // Atraso de 500ms para simular uma chamada de rede.
-  }, []);
+    };
+    fetchWorkouts();
+  }, [user]);
 
   /**
    * Atualiza o meta (séries/repetições) de um exercício específico no estado.
@@ -63,39 +76,41 @@ const WorkoutsPage = () => {
    * @param {number} exerciseIndex - O índice do exercício.
    * @param {string} newMeta - O novo valor para o meta.
    */
-  const handleMetaChange = (dayId, sectionIndex, exerciseIndex, newMeta) => {
-    setWorkouts((currentWorkouts) => {
-      const updatedWorkouts = currentWorkouts.map((day) => {
-        if (day.id === dayId) {
-          const updatedSections = day.sections.map((section, sIdx) => {
-            if (sIdx === sectionIndex) {
-              const updatedExercises = section.exercises.map(
-                (exercise, eIdx) => {
-                  if (eIdx === exerciseIndex) {
-                    // Em uma aplicação real, aqui seria o local para disparar
-                    // uma função que salva a alteração no Firebase.
-                    const updatedEx = {...exercise, meta: newMeta};
-                    // Atualiza o local storage para refletir as edições de séries feitas pelo usuário
-                    const currentStorage = JSON.parse(
-                      localStorage.getItem("myfit_workout_plan") || "[]",
-                    );
-                    // Em um cenário real com ID único de usuário iteraríamos sobre a store.
-
-                    return {...exercise, meta: newMeta};
-                  }
-                  return exercise;
-                },
-              );
-              return {...section, exercises: updatedExercises};
-            }
-            return section;
-          });
-          return {...day, sections: updatedSections};
-        }
-        return day;
-      });
-      return updatedWorkouts;
+  const handleMetaChange = async (
+    dayId,
+    sectionIndex,
+    exerciseIndex,
+    newMeta,
+  ) => {
+    const updatedWorkouts = workouts.map((day) => {
+      if (day.id === dayId) {
+        const updatedSections = day.sections.map((section, sIdx) => {
+          if (sIdx === sectionIndex) {
+            const updatedExercises = section.exercises.map((exercise, eIdx) => {
+              if (eIdx === exerciseIndex) {
+                return {...exercise, meta: newMeta};
+              }
+              return exercise;
+            });
+            return {...section, exercises: updatedExercises};
+          }
+          return section;
+        });
+        return {...day, sections: updatedSections};
+      }
+      return day;
     });
+
+    setWorkouts(updatedWorkouts);
+
+    if (user?.uid) {
+      try {
+        const docRef = doc(db, "workoutPlans", user.uid);
+        await setDoc(docRef, {plans: updatedWorkouts}, {merge: true});
+      } catch (error) {
+        console.error("Erro ao salvar séries no Firebase:", error);
+      }
+    }
   };
 
   if (loading) {
