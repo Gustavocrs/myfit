@@ -1,63 +1,13 @@
 [
   {
-    "id": "rosca_scott_triceps_corda",
-    "name": "1. Bi-Set: Rosca Scott (Máq) + Tríceps Corda",
-    "defaultMeta": "4 x 10-12",
-    "muscleGroup": "Bíceps / Tríceps",
-    "restTime": "⏱️ 90s",
-    "details": "Isolamento",
-    "color": "purple",
-    "instructions": "Sem descanso entre os dois: Faça a Rosca na máquina Scott e vá direto para a polia alta. Só descanse 90s após completar ambos. Falha total apenas na série 4."
-  },
-  {
-    "id": "rosca_45_triceps_frances",
-    "name": "2. Bi-Set: Rosca 45º + Tríceps Francês (Polia)",
-    "defaultMeta": "3 x 10-12",
-    "muscleGroup": "Bíceps / Tríceps",
-    "restTime": "⏱️ 90s",
-    "details": "Alongamento",
-    "color": "purple",
-    "instructions": "No francês, banco a 90º de costas para a polia baixa com corda. Coluna totalmente colada no banco, zerando a compressão discal."
-  },
-  {
-    "id": "elevacao_lateral_sentado",
-    "name": "3. Elevação Lateral (Sentado)",
-    "defaultMeta": "4 x 12-15",
-    "muscleGroup": "Ombro",
-    "restTime": "⏱️ 60s",
-    "details": "1 Drop-Set",
-    "color": "red",
-    "instructions": "Obrigatório sentado. Elimina oscilação lombar. Faça 1 único Drop-set na última série (reduza o peso 30% e vá até falhar de novo)."
-  },
-  {
-    "id": "desenv_arnold_sentado",
-    "name": "4. Desenv. Arnold (Sentado)",
-    "defaultMeta": "3 x 10",
-    "muscleGroup": "Ombro",
-    "restTime": "⏱️ 90s",
-    "details": "Massa Anterior",
-    "color": "none",
-    "instructions": "Costas 100% coladas no encosto. Empurre focado na contração. Não crie arco lombar em nenhuma hipótese."
-  },
-  {
-    "id": "crucifixo_inverso_maq",
-    "name": "5. Crucifixo Inverso (Máquina)",
-    "defaultMeta": "3 x 12-15",
-    "muscleGroup": "Ombro Posterior",
-    "restTime": "⏱️ 60s",
-    "details": "Postura",
-    "color": "none",
-    "instructions": "Foque em esmagar a parte de trás do ombro para tracionar a postura de quem trabalha sentado o dia todo."
-  },
-  {
-    "id": "puxada_alta_pulley",
-    "name": "1. Puxada Alta (Pulley)",
-    "defaultMeta": "4 x 10-12",
-    "muscleGroup": "Costas",
-    "restTime": "⏱️ 90 a 120s",
-    "details": "Expansão",
-    "color": "blue",
-    "instructions": "Coluna estritamente vertical. Traga a barra até o topo do peito e segure contração isométrica por 2s."
+    "id": "supino_reto_barra",
+    "name": "1. Supino Reto (Barra)",
+    "defaultMeta": "4 x 8-10",
+    "muscleGroup": "Peito",
+    "restTime": "⏱️ 120s",
+    "details": "Força Base",
+    "color": "orange",
+    "instructions": "Retração escapular mandatória. A barra deve tocar na linha dos mamilos. Os cotovelos não devem passar de 45 a 60 graus em relação ao tronco."
   },
   {
     "id": "supino_inclinado_halter",
@@ -67,176 +17,686 @@
     "restTime": "⏱️ 90 a 120s",
     "details": "Peitoral Superior",
     "color": "orange",
-    "instructions": "Preenche a porção clavicular combatendo o aspecto de \"peito caído\". Desça o peso em 3 a 4 segundos."
-  },
-  {
-    "id": "remada_baixa_triangulo",
-    "name": "3. Remada Baixa (Triângulo)",
-    "defaultMeta": "3 x 12",
-    "muscleGroup": "Costas",
-    "restTime": "⏱️ 90s",
-    "details": "Miolo das Costas",
-    "color": "blue",
-    "instructions": "Alerta Hérnia: Joelhos semiflexionados. O tronco fica imóvel como estátua; apenas os braços puxam."
+    "instructions": "Preenche a porção clavicular. Banco entre 30º e 45º. Desça o peso controladamente em 3 a 4 segundos."
   },
   {
     "id": "peck_deck_voador",
-    "name": "4. Peck Deck (Voador)",
+    "name": "3. Peck Deck (Voador)",
     "defaultMeta": "3 x 12-15",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 60s",
-    "details": "Rest-Pause",
-    "color": "none",
-    "instructions": "Costas apoiadas. Na última série, alcance a falha, descanse 15s na própria máquina e faça mais repetições."
+    "details": "Isolamento",
+    "color": "orange",
+    "instructions": "Costas apoiadas e peito estufado. Na contração máxima, esmague o peitoral por 1 segundo antes de iniciar a fase excêntrica."
   },
   {
     "id": "cross_over_polia_alta",
-    "name": "5. Cross-over (Polia Alta)",
+    "name": "4. Cross-over (Polia Alta)",
     "defaultMeta": "3 x 12-15",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 60 a 90s",
     "details": "Corte Inferior",
     "color": "orange",
-    "instructions": "Fechamento dos cabos de cima para baixo. Isola a porção externa do peito (flacidez). Core muito contraído."
+    "instructions": "Fechamento dos cabos de cima para baixo. Isola a porção externa e inferior do peito. Mantenha o core muito contraído."
   },
   {
-    "id": "elevacao_lateral_cabo",
-    "name": "6. Elev. Lateral (Cabo Uni)",
-    "defaultMeta": "3 x 15",
-    "muscleGroup": "Ombro",
-    "restTime": "⏱️ 60s",
-    "details": "Pump Final",
-    "color": "red",
-    "instructions": "Tensão constante da polia baixa. Carga leve a moderada apenas para manter o músculo bombeado."
-  },
-  {
-    "id": "elevacao_pelvica_maq",
-    "name": "1. Elevação Pélvica (Máquina/Barra)",
-    "defaultMeta": "4 x 10-12",
-    "muscleGroup": "Glúteo Máximo",
-    "restTime": "⏱️ 120s",
-    "details": "Pico de Contração",
-    "color": "green",
-    "instructions": "Apoie as escápulas no banco. Suba o quadril e contraia o glúteo intencionalmente no topo por 2 a 3 segundos. Sem carga compressiva na coluna."
-  },
-  {
-    "id": "leg_press_45",
-    "name": "2. Leg Press 45º (Pés Altos)",
-    "defaultMeta": "3 x 10-12",
-    "muscleGroup": "Glúteo / Posterior",
-    "restTime": "⏱️ 120s",
-    "details": "Foco Inferior",
-    "color": "green",
-    "instructions": "Pés posicionados na parte alta e afastada da plataforma. A força deve sair estritamente dos calcanhares. Não desça o peso a ponto de descolar a lombar do encosto."
-  },
-  {
-    "id": "cadeira_abdutora",
-    "name": "3. Cadeira Abdutora",
-    "defaultMeta": "3 x 15-20",
-    "muscleGroup": "Glúteo Médio",
-    "restTime": "⏱️ 90s",
-    "details": "Formato Redondo",
-    "color": "green",
-    "instructions": "Descole as costas do encosto e incline o tronco a 45º para a frente segurando na máquina. Isso elimina o hip dip e recruta a lateral."
-  },
-  {
-    "id": "mesa_flexora",
-    "name": "4. Mesa Flexora",
-    "defaultMeta": "3 x 12",
-    "muscleGroup": "Posterior Coxa",
-    "restTime": "⏱️ 90s",
-    "details": "Isolamento",
-    "color": "green",
-    "instructions": "Deitado de bruços, mantenha o quadril colado na prancha para evitar que a lombar roube o movimento durante a flexão."
-  },
-  {
-    "id": "agachamento_livre_barra",
-    "name": "5. Agachamento Livre",
-    "defaultMeta": "4 x 8-10",
-    "muscleGroup": "Quadríceps / Glúteo",
-    "restTime": "⏱️ 120 a 150s",
-    "details": "Construtor de Base",
-    "color": "green",
-    "instructions": "Mantenha o core rígido. Quebre a paralela apenas se a sua mobilidade de tornozelo permitir sem retroversão pélvica."
-  },
-  {
-    "id": "cadeira_extensora",
-    "name": "6. Cadeira Extensora",
-    "defaultMeta": "4 x 12-15",
-    "muscleGroup": "Quadríceps",
-    "restTime": "⏱️ 90s",
-    "details": "Isolamento Anterior",
-    "color": "green",
-    "instructions": "Ajuste o encosto para que o joelho fique exatamente no eixo da máquina. Controle a descida resistindo ao peso."
-  },
-  {
-    "id": "gemeos_sentado_maquina",
-    "name": "7. Gêmeos Sentado (Máquina)",
-    "defaultMeta": "4 x 15-20",
-    "muscleGroup": "Panturrilha (Sóleos)",
-    "restTime": "⏱️ 60s",
-    "details": "Amplitude Máxima",
-    "color": "yellow",
-    "instructions": "Alongue ao máximo descendo o calcanhar e faça uma pausa de 1 segundo embaixo para eliminar o reflexo elástico do tendão."
-  },
-  {
-    "id": "gemeos_em_pe_smith",
-    "name": "8. Gêmeos em Pé (Smith)",
-    "defaultMeta": "4 x 12-15",
-    "muscleGroup": "Panturrilha (Gastrocnêmio)",
+    "id": "cross_over_polia_baixa",
+    "name": "5. Cross-over (Polia Baixa)",
+    "defaultMeta": "3 x 12-15",
+    "muscleGroup": "Peito",
     "restTime": "⏱️ 60 a 90s",
-    "details": "Carga Pesada",
-    "color": "yellow",
-    "instructions": "Joelhos totalmente estendidos. Concentre a força no dedão do pé para recrutar a porção interna da panturrilha."
+    "details": "Foco Clavicular",
+    "color": "orange",
+    "instructions": "Movimento de baixo para cima. Foque em unir os pulsos na altura do rosto para recrutar a parte superior do peito."
   },
   {
-    "id": "crunch_polia_alta",
-    "name": "1. Crunch na Polia Alta",
-    "defaultMeta": "4 x 15",
-    "muscleGroup": "Abdômen",
+    "id": "supino_declinado_barra",
+    "name": "6. Supino Declinado",
+    "defaultMeta": "4 x 10",
+    "muscleGroup": "Peito",
+    "restTime": "⏱️ 120s",
+    "details": "Volume Inferior",
+    "color": "orange",
+    "instructions": "Pés travados no suporte do banco. Evite amplitude exagerada que sobrecarregue a articulação do ombro."
+  },
+  {
+    "id": "supino_maquina_articulada",
+    "name": "7. Supino Máquina",
+    "defaultMeta": "4 x 10-12",
+    "muscleGroup": "Peito",
+    "restTime": "⏱️ 90s",
+    "details": "Tensão Contínua",
+    "color": "orange",
+    "instructions": "Ajuste o banco para que as manoplas fiquem na linha média do peito. Ideal para extrair as últimas repetições até a falha."
+  },
+  {
+    "id": "pullover_halter",
+    "name": "8. Pullover (Halter)",
+    "defaultMeta": "3 x 12",
+    "muscleGroup": "Peito",
+    "restTime": "⏱️ 90s",
+    "details": "Expansão Torácica",
+    "color": "orange",
+    "instructions": "Apoie apenas a parte superior das costas no banco horizontal. Mantenha o quadril baixo para maior alongamento da fáscia."
+  },
+  {
+    "id": "crucifixo_reto_halter",
+    "name": "9. Crucifixo Reto (Halter)",
+    "defaultMeta": "3 x 12-15",
+    "muscleGroup": "Peito",
     "restTime": "⏱️ 60s",
-    "details": "Carga Contínua",
-    "color": "teal",
-    "instructions": "Ajoelhado, segure a corda atrás da nuca. Flexione a coluna enrolando o tronco, não apenas descendo o quadril."
+    "details": "Alongamento",
+    "color": "orange",
+    "instructions": "Cotovelos levemente flexionados e travados nesse ângulo. O movimento imita o ato de 'abraçar uma árvore'."
   },
   {
-    "id": "prancha_isometrica",
-    "name": "2. Prancha Isométrica",
+    "id": "flexao_de_bracos",
+    "name": "10. Flexão de Braços",
     "defaultMeta": "3 x Máx",
-    "muscleGroup": "Core",
+    "muscleGroup": "Peito",
     "restTime": "⏱️ 60s",
-    "details": "Estabilização",
-    "color": "teal",
-    "instructions": "Contraia glúteos e abdômen simultaneamente. O corpo deve formar uma linha reta intransigente. Respire de forma controlada."
+    "details": "Calistenia",
+    "color": "orange",
+    "instructions": "Corpo em prancha reta, contraindo glúteos. As mãos devem estar ligeiramente mais abertas que a largura dos ombros."
+  },
+  {
+    "id": "puxada_alta_pulley",
+    "name": "1. Puxada Alta (Pulley)",
+    "defaultMeta": "4 x 10-12",
+    "muscleGroup": "Costas",
+    "restTime": "⏱️ 90 a 120s",
+    "details": "Expansão Dorsal",
+    "color": "blue",
+    "instructions": "Coluna vertical. Traga a barra até o topo do peito e segure a contração isométrica por 1 a 2 segundos."
+  },
+  {
+    "id": "remada_baixa_triangulo",
+    "name": "2. Remada Baixa (Triângulo)",
+    "defaultMeta": "3 x 12",
+    "muscleGroup": "Costas",
+    "restTime": "⏱️ 90s",
+    "details": "Miolo das Costas",
+    "color": "blue",
+    "instructions": "Joelhos semiflexionados. O tronco fica estático; retraia as escápulas antes de puxar o triângulo até o abdômen."
   },
   {
     "id": "levantamento_terra",
-    "name": "6. Levantamento Terra",
-    "defaultMeta": "3 x 5-8",
-    "muscleGroup": "Costas / Posterior",
+    "name": "3. Levantamento Terra",
+    "defaultMeta": "4 x 5-8",
+    "muscleGroup": "Costas",
     "restTime": "⏱️ 180s",
-    "details": "Força Bruta",
+    "details": "Força Integrada",
     "color": "blue",
-    "instructions": "A barra deve raspar nas canelas. O movimento começa empurrando o chão com as pernas, mantendo a coluna neutra."
+    "instructions": "A barra deve raspar nas canelas. O movimento inicia empurrando o chão com as pernas, travando o core e mantendo a coluna neutra."
+  },
+  {
+    "id": "remada_curvada_barra",
+    "name": "4. Remada Curvada (Barra)",
+    "defaultMeta": "4 x 8-10",
+    "muscleGroup": "Costas",
+    "restTime": "⏱️ 120s",
+    "details": "Densidade Dorsal",
+    "color": "blue",
+    "instructions": "Incline o tronco a cerca de 45 graus. Puxe a barra em direção ao umbigo, esmagando as escápulas no topo."
+  },
+  {
+    "id": "barra_fixa_pronada",
+    "name": "5. Barra Fixa (Pronada)",
+    "defaultMeta": "3 x Máx",
+    "muscleGroup": "Costas",
+    "restTime": "⏱️ 120s",
+    "details": "Largura de Dorsal",
+    "color": "blue",
+    "instructions": "Evite balançar (kipping). Puxe o corpo até o queixo ultrapassar a barra. Use graviton se necessário para manter a forma."
+  },
+  {
+    "id": "remada_cavalinho",
+    "name": "6. Remada Cavalinho",
+    "defaultMeta": "3 x 10-12",
+    "muscleGroup": "Costas",
+    "restTime": "⏱️ 90s",
+    "details": "Volume de Meio das Costas",
+    "color": "blue",
+    "instructions": "Utilize o triângulo na barra T. Evite erguer o tronco durante a puxada pesada; deixe os dorsais realizarem o trabalho."
+  },
+  {
+    "id": "remada_serrote_unilateral",
+    "name": "7. Remada Serrote (Halter)",
+    "defaultMeta": "4 x 10-12",
+    "muscleGroup": "Costas",
+    "restTime": "⏱️ 60s",
+    "details": "Assimetria",
+    "color": "blue",
+    "instructions": "Apoie joelho e mão livres em um banco plano. Puxe o halter em um movimento de arco em direção ao quadril."
+  },
+  {
+    "id": "puxada_supinada",
+    "name": "8. Puxada Alta Supinada",
+    "defaultMeta": "3 x 10-12",
+    "muscleGroup": "Costas",
+    "restTime": "⏱️ 90s",
+    "details": "Foco Inferior Dorsal",
+    "color": "blue",
+    "instructions": "Pegada invertida (palmas viradas para você), na largura dos ombros. Foque em trazer os cotovelos para baixo e para trás."
+  },
+  {
+    "id": "pulldown_corda",
+    "name": "9. Pulldown (Corda)",
+    "defaultMeta": "3 x 15",
+    "muscleGroup": "Costas",
+    "restTime": "⏱️ 60s",
+    "details": "Isolamento de Dorsal",
+    "color": "blue",
+    "instructions": "Braços levemente flexionados, movimente o peso utilizando apenas a articulação do ombro (extensão). Não dobre os cotovelos durante a execução."
+  },
+  {
+    "id": "remada_maquina",
+    "name": "10. Remada Máquina Articulada",
+    "defaultMeta": "3 x 12",
+    "muscleGroup": "Costas",
+    "restTime": "⏱️ 90s",
+    "details": "Segurança Lombar",
+    "color": "blue",
+    "instructions": "Apoie bem o peito no encosto frontal. Execute a fase concêntrica explosiva e a excêntrica em 3 segundos."
+  },
+  {
+    "id": "elevacao_lateral_sentado",
+    "name": "1. Elevação Lateral (Sentado)",
+    "defaultMeta": "4 x 12-15",
+    "muscleGroup": "Ombro",
+    "restTime": "⏱️ 60s",
+    "details": "Porção Medial",
+    "color": "red",
+    "instructions": "Obrigatório sentado para eliminar oscilação lombar. Conduza o movimento pelos cotovelos, e não pelas mãos."
+  },
+  {
+    "id": "desenv_arnold_sentado",
+    "name": "2. Desenv. Arnold (Sentado)",
+    "defaultMeta": "3 x 10",
+    "muscleGroup": "Ombro",
+    "restTime": "⏱️ 90s",
+    "details": "Massa Anterior",
+    "color": "red",
+    "instructions": "Costas 100% coladas no encosto. Inicie com palmas viradas para o rosto e rotacione durante a subida."
+  },
+  {
+    "id": "crucifixo_inverso_maq",
+    "name": "3. Crucifixo Inverso (Máquina)",
+    "defaultMeta": "3 x 12-15",
+    "muscleGroup": "Ombro",
+    "restTime": "⏱️ 60s",
+    "details": "Posterior de Ombro",
+    "color": "red",
+    "instructions": "Foque em esmagar a parte de trás do ombro para tracionar a postura. O banco deve estar ajustado para manter os braços paralelos ao solo."
+  },
+  {
+    "id": "elevacao_lateral_cabo",
+    "name": "4. Elev. Lateral (Cabo Uni)",
+    "defaultMeta": "3 x 15",
+    "muscleGroup": "Ombro",
+    "restTime": "⏱️ 60s",
+    "details": "Tensão Contínua",
+    "color": "red",
+    "instructions": "Passe o cabo por trás ou pela frente do corpo. Carga leve para focar estritamente no pico de contração lateral."
   },
   {
     "id": "encolhimento_halteres",
-    "name": "7. Encolhimento de Ombros",
+    "name": "5. Encolhimento de Ombros",
     "defaultMeta": "4 x 15",
-    "muscleGroup": "Trapézio",
+    "muscleGroup": "Ombro",
     "restTime": "⏱️ 60s",
-    "details": "Sem Giro",
-    "color": "none",
-    "instructions": "Eleve os ombros verticalmente em direção às orelhas. Não rotacione os ombros para trás para evitar atrito articular."
+    "details": "Trapézio Superior",
+    "color": "red",
+    "instructions": "Eleve os ombros verticalmente em direção às orelhas. Não rotacione os ombros para trás; o movimento é puramente vertical."
   },
   {
-    "id": "rosca_inversa_barra_w",
-    "name": "3. Rosca Inversa (Barra W)",
-    "defaultMeta": "3 x 12-15",
-    "muscleGroup": "Antebraço / Braquial",
+    "id": "desenv_barra_frente",
+    "name": "6. Desenv. Frontal (Barra)",
+    "defaultMeta": "4 x 8-10",
+    "muscleGroup": "Ombro",
+    "restTime": "⏱️ 120s",
+    "details": "Construtor de Força",
+    "color": "red",
+    "instructions": "A barra desce até a altura do queixo ou clavícula. Cuidado para não hiperextender a lombar na subida da carga."
+  },
+  {
+    "id": "elevacao_frontal_halter",
+    "name": "7. Elevação Frontal (Halter)",
+    "defaultMeta": "3 x 12",
+    "muscleGroup": "Ombro",
     "restTime": "⏱️ 60s",
-    "details": "Pegada Pronada",
+    "details": "Foco Anterior",
+    "color": "red",
+    "instructions": "Suba o halter até a altura dos olhos. Utilize pegada pronada ou neutra de acordo com seu conforto articular."
+  },
+  {
+    "id": "face_pull_corda",
+    "name": "8. Face Pull (Polia)",
+    "defaultMeta": "3 x 15",
+    "muscleGroup": "Ombro",
+    "restTime": "⏱️ 60s",
+    "details": "Saúde Articular",
+    "color": "red",
+    "instructions": "Traga o centro da corda na direção do nariz/testa, separando as extremidades ao final do movimento e rotacionando externamente."
+  },
+  {
+    "id": "remada_alta_polia",
+    "name": "9. Remada Alta (Polia)",
+    "defaultMeta": "3 x 12",
+    "muscleGroup": "Ombro",
+    "restTime": "⏱️ 60s",
+    "details": "Trapézio e Deltoide Medial",
+    "color": "red",
+    "instructions": "Pegada mais larga que a largura dos ombros minimiza o impacto articular. Os cotovelos lideram o movimento para o alto."
+  },
+  {
+    "id": "crucifixo_inverso_halter",
+    "name": "10. Crucifixo Inverso (Halter)",
+    "defaultMeta": "3 x 15",
+    "muscleGroup": "Ombro",
+    "restTime": "⏱️ 60s",
+    "details": "Posterior Livre",
+    "color": "red",
+    "instructions": "Incline o tronco até quase 90º. Mova o peso abrindo os braços para os lados focando inteiramente no deltoide posterior."
+  },
+  {
+    "id": "rosca_scott_triceps_corda",
+    "name": "1. Bi-Set: Rosca Scott + Tríceps Corda",
+    "defaultMeta": "4 x 10-12",
+    "muscleGroup": "Bíceps",
+    "restTime": "⏱️ 90s",
+    "details": "Isolamento Duplo",
     "color": "purple",
-    "instructions": "Pegada por cima da barra. Suba o peso mantendo os cotovelos colados ao tronco. Controla a excêntrica."
+    "instructions": "Sem descanso: Rosca Scott e vá direto para a polia alta. Só descanse após completar ambos. Falha apenas na série 4."
+  },
+  {
+    "id": "rosca_direta_barra",
+    "name": "2. Rosca Direta (Barra)",
+    "defaultMeta": "4 x 8-10",
+    "muscleGroup": "Bíceps",
+    "restTime": "⏱️ 90s",
+    "details": "Construtor de Massa",
+    "color": "purple",
+    "instructions": "Cotovelos colados às costelas. Evite o impulso lombar balançando o corpo; utilize apenas a contração do bíceps."
+  },
+  {
+    "id": "rosca_martelo_halter",
+    "name": "3. Rosca Martelo (Halter)",
+    "defaultMeta": "3 x 12",
+    "muscleGroup": "Bíceps",
+    "restTime": "⏱️ 60s",
+    "details": "Braquial e Antebraço",
+    "color": "purple",
+    "instructions": "Pegada neutra. Pode ser feita alternada ou simultânea. Crucial para desenvolver a espessura lateral do braço."
+  },
+  {
+    "id": "rosca_concentrada",
+    "name": "4. Rosca Concentrada",
+    "defaultMeta": "3 x 10-12",
+    "muscleGroup": "Bíceps",
+    "restTime": "⏱️ 60s",
+    "details": "Pico do Bíceps",
+    "color": "purple",
+    "instructions": "Sentado, apoie o tríceps na parte interna da coxa. Isole completamente a articulação do ombro."
+  },
+  {
+    "id": "rosca_45_graus",
+    "name": "5. Rosca no Banco 45º",
+    "defaultMeta": "3 x 10-12",
+    "muscleGroup": "Bíceps",
+    "restTime": "⏱️ 90s",
+    "details": "Alongamento Máximo",
+    "color": "purple",
+    "instructions": "Deixe os braços pendendo para trás do tronco ao sentar no banco inclinado. Retarda a falha por focar na cabeça longa."
+  },
+  {
+    "id": "rosca_inversa_barra",
+    "name": "6. Rosca Inversa (Barra W)",
+    "defaultMeta": "3 x 12-15",
+    "muscleGroup": "Bíceps",
+    "restTime": "⏱️ 60s",
+    "details": "Foco Antebraço",
+    "color": "purple",
+    "instructions": "Pegada pronada (palmas para baixo). Suba o peso mantendo os cotovelos travados. Extremamente eficaz para pegada."
+  },
+  {
+    "id": "rosca_polia_baixa",
+    "name": "7. Rosca Direta (Polia Baixa)",
+    "defaultMeta": "3 x 15",
+    "muscleGroup": "Bíceps",
+    "restTime": "⏱️ 60s",
+    "details": "Tensão Contínua",
+    "color": "purple",
+    "instructions": "Diferente dos halteres, a polia oferece resistência na fase mais baixa do movimento, mantendo o músculo engajado 100% do tempo."
+  },
+  {
+    "id": "rosca_spider",
+    "name": "8. Rosca Spider",
+    "defaultMeta": "3 x 10-12",
+    "muscleGroup": "Bíceps",
+    "restTime": "⏱️ 60s",
+    "details": "Cabeça Curta",
+    "color": "purple",
+    "instructions": "Bruços no banco inclinado, os braços pendem na vertical pura. Anula totalmente a possibilidade de usar momento/impulso."
+  },
+  {
+    "id": "rosca_alternada",
+    "name": "9. Rosca Alternada (Halter)",
+    "defaultMeta": "3 x 12",
+    "muscleGroup": "Bíceps",
+    "restTime": "⏱️ 60s",
+    "details": "Isolamento Lateral",
+    "color": "purple",
+    "instructions": "Faça a supinação (giro do punho) durante a subida de cada braço isoladamente para recrutar as fibras de forma orgânica."
+  },
+  {
+    "id": "rosca_cruzada_polia",
+    "name": "10. Rosca Cruzada (Polia Alta)",
+    "defaultMeta": "3 x 15",
+    "muscleGroup": "Bíceps",
+    "restTime": "⏱️ 60s",
+    "details": "Pico Final",
+    "color": "purple",
+    "instructions": "Posicione-se no meio do cross-over. Contraia trazendo os cabos em direção à cabeça como na pose de 'duplo bíceps'."
+  },
+  {
+    "id": "triceps_corda_polia",
+    "name": "1. Tríceps Corda (Polia)",
+    "defaultMeta": "4 x 12",
+    "muscleGroup": "Tríceps",
+    "restTime": "⏱️ 60s",
+    "details": "Porção Lateral",
+    "color": "purple",
+    "instructions": "Ao final da extensão dos braços, abra as pontas da corda para fora intensificando o recrutamento lateral do tríceps."
+  },
+  {
+    "id": "triceps_frances_polia",
+    "name": "2. Tríceps Francês (Polia/Corda)",
+    "defaultMeta": "3 x 10-12",
+    "muscleGroup": "Tríceps",
+    "restTime": "⏱️ 90s",
+    "details": "Cabeça Longa",
+    "color": "purple",
+    "instructions": "Banco a 90º de costas para a polia. Cotovelos apontados para o teto. Zera a compressão lombar com a postura sentada."
+  },
+  {
+    "id": "triceps_testa_w",
+    "name": "3. Tríceps Testa (Barra W)",
+    "defaultMeta": "4 x 10",
+    "muscleGroup": "Tríceps",
+    "restTime": "⏱️ 90s",
+    "details": "Construtor Clássico",
+    "color": "purple",
+    "instructions": "Deitado, incline levemente os braços para trás da linha da testa para manter o tríceps sob tensão inclusive no topo."
+  },
+  {
+    "id": "triceps_pulley_reta",
+    "name": "4. Tríceps Pulley (Barra Reta)",
+    "defaultMeta": "3 x 12",
+    "muscleGroup": "Tríceps",
+    "restTime": "⏱️ 60s",
+    "details": "Força Direta",
+    "color": "purple",
+    "instructions": "Trave os cotovelos firmemente ao lado do corpo. O movimento ocorre estritamente nos antebraços empurrando para baixo."
+  },
+  {
+    "id": "triceps_coice_halter",
+    "name": "5. Tríceps Coice (Halter)",
+    "defaultMeta": "3 x 12-15",
+    "muscleGroup": "Tríceps",
+    "restTime": "⏱️ 60s",
+    "details": "Finalizador Unilateral",
+    "color": "purple",
+    "instructions": "Tronco paralelo ao chão. Estenda o braço para trás estabilizando o cotovelo no alto e contraia 1 segundo no topo."
+  },
+  {
+    "id": "triceps_supinado",
+    "name": "6. Supino Fechado (Supinado)",
+    "defaultMeta": "4 x 8-10",
+    "muscleGroup": "Tríceps",
+    "restTime": "⏱️ 120s",
+    "details": "Força Composta",
+    "color": "purple",
+    "instructions": "Pegada na largura dos ombros. Desça a barra na linha abaixo do peitoral. Mantém os cotovelos rente ao corpo durante a execução."
+  },
+  {
+    "id": "mergulho_paralelas",
+    "name": "7. Mergulho nas Paralelas",
+    "defaultMeta": "3 x Máx",
+    "muscleGroup": "Tríceps",
+    "restTime": "⏱️ 90s",
+    "details": "Peso Corporal Integrado",
+    "color": "purple",
+    "instructions": "Mantenha o tronco o mais vertical possível (inclinado recruta mais o peitoral). Desça até os cotovelos formarem 90 graus."
+  },
+  {
+    "id": "triceps_maquina",
+    "name": "8. Tríceps Máquina",
+    "defaultMeta": "3 x 10-12",
+    "muscleGroup": "Tríceps",
+    "restTime": "⏱️ 60s",
+    "details": "Isolamento Guiado",
+    "color": "purple",
+    "instructions": "Sente e fixe-se sob as almofadas. Ideal para manter tensão pesada quando os estabilizadores já estão fadigados no final do treino."
+  },
+  {
+    "id": "triceps_banco",
+    "name": "9. Mergulho no Banco",
+    "defaultMeta": "3 x 15",
+    "muscleGroup": "Tríceps",
+    "restTime": "⏱️ 60s",
+    "details": "Finalizador",
+    "color": "purple",
+    "instructions": "Apoie as mãos em um banco atrás de você, dedos voltados à frente. Mantenha as costas rente ao banco para não agredir os ombros."
+  },
+  {
+    "id": "triceps_unilateral_cabo",
+    "name": "10. Tríceps Unilateral Inverso",
+    "defaultMeta": "3 x 12",
+    "muscleGroup": "Tríceps",
+    "restTime": "⏱️ 60s",
+    "details": "Assimetria e Correção",
+    "color": "purple",
+    "instructions": "Pegada supinada na manopla do cabo. Foca isoladamente em equilibrar força entre o braço dominante e o não-dominante."
+  },
+  {
+    "id": "agachamento_livre_barra",
+    "name": "1. Agachamento Livre",
+    "defaultMeta": "4 x 8-10",
+    "muscleGroup": "Pernas",
+    "restTime": "⏱️ 120 a 150s",
+    "details": "Construtor Global",
+    "color": "green",
+    "instructions": "Mantenha o core rígido e os joelhos alinhados com a ponta dos pés. Quebre a paralela apenas se possuir mobilidade sem retroversão."
+  },
+  {
+    "id": "leg_press_45",
+    "name": "2. Leg Press 45º",
+    "defaultMeta": "4 x 10-12",
+    "muscleGroup": "Pernas",
+    "restTime": "⏱️ 120s",
+    "details": "Foco Quadríceps/Glúteo",
+    "color": "green",
+    "instructions": "Pés alinhados. A força sai estritamente dos calcanhares. Não desça o peso a ponto de descolar a lombar do encosto em hipótese alguma."
+  },
+  {
+    "id": "cadeira_extensora",
+    "name": "3. Cadeira Extensora",
+    "defaultMeta": "4 x 12-15",
+    "muscleGroup": "Pernas",
+    "restTime": "⏱️ 90s",
+    "details": "Isolamento Anterior",
+    "color": "green",
+    "instructions": "Ajuste o encosto para que o joelho fique exatamente no eixo da máquina. Controle a fase excêntrica da descida resistindo ativamente."
+  },
+  {
+    "id": "cadeira_flexora",
+    "name": "4. Cadeira Flexora",
+    "defaultMeta": "3 x 12-15",
+    "muscleGroup": "Pernas",
+    "restTime": "⏱️ 90s",
+    "details": "Isolamento Posterior",
+    "color": "green",
+    "instructions": "Prenda bem a almofada sobre as coxas para evitar que o quadril levante e o movimento perca a eficiência biomecânica no posterior."
+  },
+  {
+    "id": "mesa_flexora",
+    "name": "5. Mesa Flexora",
+    "defaultMeta": "3 x 12",
+    "muscleGroup": "Pernas",
+    "restTime": "⏱️ 90s",
+    "details": "Posterior Estrito",
+    "color": "green",
+    "instructions": "Deitado de bruços, mantenha o quadril pressionado contra a prancha para que a lombar não assuma a carga durante a contração."
+  },
+  {
+    "id": "stiff_barra",
+    "name": "6. Stiff (Barra/Halter)",
+    "defaultMeta": "4 x 10",
+    "muscleGroup": "Pernas",
+    "restTime": "⏱️ 120s",
+    "details": "Alongamento Posterior",
+    "color": "green",
+    "instructions": "Joelhos destravados (não 100% esticados). Jogue o quadril para trás como se fosse encostar na parede, mantendo a curvatura natural da coluna."
+  },
+  {
+    "id": "agachamento_bulgaro",
+    "name": "7. Agachamento Búlgaro",
+    "defaultMeta": "3 x 10-12",
+    "muscleGroup": "Pernas",
+    "restTime": "⏱️ 90s",
+    "details": "Unilateral Base",
+    "color": "green",
+    "instructions": "Pé de trás apoiado no banco. O tronco levemente inclinado para frente recruta glúteo, enquanto tronco ereto foca puramente no quadríceps."
+  },
+  {
+    "id": "cadeira_abdutora",
+    "name": "8. Cadeira Abdutora",
+    "defaultMeta": "3 x 15-20",
+    "muscleGroup": "Pernas",
+    "restTime": "⏱️ 90s",
+    "details": "Glúteo Médio",
+    "color": "green",
+    "instructions": "Incline o tronco a 45º para a frente segurando na base da máquina. Elimina ação espúria e foca na borda lateral do glúteo."
+  },
+  {
+    "id": "elevacao_pelvica_maq",
+    "name": "9. Elevação Pélvica",
+    "defaultMeta": "4 x 10-12",
+    "muscleGroup": "Pernas",
+    "restTime": "⏱️ 120s",
+    "details": "Pico de Glúteo",
+    "color": "green",
+    "instructions": "Apoie as escápulas. Suba o quadril gerando retroversão e contraia intencionalmente o glúteo no topo por 2 a 3 segundos."
+  },
+  {
+    "id": "passada_avanco_halter",
+    "name": "10. Passada/Avanço",
+    "defaultMeta": "3 x 12 passos",
+    "muscleGroup": "Pernas",
+    "restTime": "⏱️ 120s",
+    "details": "Funcional Dinâmico",
+    "color": "green",
+    "instructions": "Passos largos focam mais no glúteo; passos curtos focam em quadríceps. Não deixe o joelho de trás bater bruscamente no chão."
+  },
+  {
+    "id": "gemeos_sentado_maquina",
+    "name": "1. Gêmeos Sentado (Máquina)",
+    "defaultMeta": "4 x 15-20",
+    "muscleGroup": "Panturrilha",
+    "restTime": "⏱️ 60s",
+    "details": "Foco nos Sóleos",
+    "color": "yellow",
+    "instructions": "Amplitude Máxima: alongue descendo o calcanhar e faça pausa de 1 segundo embaixo para inibir o reflexo elástico do tendão de Aquiles."
+  },
+  {
+    "id": "gemeos_em_pe_smith",
+    "name": "2. Gêmeos em Pé (Smith)",
+    "defaultMeta": "4 x 12-15",
+    "muscleGroup": "Panturrilha",
+    "restTime": "⏱️ 60 a 90s",
+    "details": "Foco Gastrocnêmio",
+    "color": "yellow",
+    "instructions": "Joelhos totalmente estendidos. Concentre a força ao pressionar pelo dedão do pé para engajar a porção interna da panturrilha de forma pesada."
+  },
+  {
+    "id": "gemeos_leg_press",
+    "name": "3. Gêmeos no Leg Press",
+    "defaultMeta": "3 x 15",
+    "muscleGroup": "Panturrilha",
+    "restTime": "⏱️ 60s",
+    "details": "Carga Contínua",
+    "color": "yellow",
+    "instructions": "Pés na borda inferior da plataforma. Use a estrutura de segurança do leg press para movimentar uma carga que não suportaria na máquina vertical."
+  },
+  {
+    "id": "gemeos_unilateral_halter",
+    "name": "4. Gêmeos Unilateral",
+    "defaultMeta": "3 x 15",
+    "muscleGroup": "Panturrilha",
+    "restTime": "⏱️ 60s",
+    "details": "Correção de Assimetria",
+    "color": "yellow",
+    "instructions": "De pé sobre um step, segurando o halter no mesmo lado da perna que trabalha. Use o outro braço como suporte de equilíbrio apenas."
+  },
+  {
+    "id": "crunch_polia_alta",
+    "name": "5. Crunch na Polia Alta",
+    "defaultMeta": "4 x 15",
+    "muscleGroup": "Abdômen",
+    "restTime": "⏱️ 60s",
+    "details": "Carga Externa",
+    "color": "teal",
+    "instructions": "Ajoelhado, segure a corda atrás da nuca. O movimento não é dobrar o quadril, é flexionar e enrolar a coluna torácica."
+  },
+  {
+    "id": "prancha_isometrica",
+    "name": "6. Prancha Isométrica",
+    "defaultMeta": "3 x Máx",
+    "muscleGroup": "Abdômen",
+    "restTime": "⏱️ 60s",
+    "details": "Estabilização Core",
+    "color": "teal",
+    "instructions": "Contraia glúteos e abdômen simultaneamente. O corpo deve ser uma viga reta e intransigente. Mantenha os cotovelos sob os ombros."
+  },
+  {
+    "id": "abdominal_infra_paralelas",
+    "name": "7. Elevação de Pernas (Sup.)",
+    "defaultMeta": "3 x 15",
+    "muscleGroup": "Abdômen",
+    "restTime": "⏱️ 60s",
+    "details": "Infra Abdominal",
+    "color": "teal",
+    "instructions": "Apoiado no aparelho de paralelas, levante as pernas esticadas ou flexionadas fazendo uma sutil inclinação da bacia no topo para ativar o abdômen inferior."
+  },
+  {
+    "id": "roda_abdominal",
+    "name": "8. Roda Abdominal",
+    "defaultMeta": "3 x 10",
+    "muscleGroup": "Abdômen",
+    "restTime": "⏱️ 90s",
+    "details": "Anti-extensão do Core",
+    "color": "teal",
+    "instructions": "Mantenha a pelve em leve retroversão. Role a roda para frente até o ponto que conseguir retornar utilizando o abdômen e não os braços."
+  },
+  {
+    "id": "abdominal_supra_banco",
+    "name": "9. Crunch Supra (Banco)",
+    "defaultMeta": "3 x 20",
+    "muscleGroup": "Abdômen",
+    "restTime": "⏱️ 60s",
+    "details": "Tensão Padrão",
+    "color": "teal",
+    "instructions": "Deitado com as pernas suspensas e joelhos a 90 graus. Tire as omoplatas do chão exalando o ar ativamente em cada contração."
+  },
+  {
+    "id": "russian_twist",
+    "name": "10. Russian Twist",
+    "defaultMeta": "3 x 20",
+    "muscleGroup": "Abdômen",
+    "restTime": "⏱️ 60s",
+    "details": "Rotação Obliquo",
+    "color": "teal",
+    "instructions": "Sentado com tronco a 45º para trás e pés elevados. Gire o tronco de lado a lado tocando o peso no chão alternadamente. O olhar acompanha o peso."
   }
 ]

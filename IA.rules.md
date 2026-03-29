@@ -48,18 +48,21 @@
 
 # PROJECT TREE
 
-.
+..
 ├── biome.json
 ├── IA.rules.md
 ├── jsconfig.json
 ├── next.config.mjs
 ├── package.json
 ├── package-lock.json
+├── page.jsx
 ├── postcss.config.mjs
 ├── public
 ├── README.md
 └── src
 ├── api
+│   ├── seed
+│   │   └── route.js
 │   └── upload
 ├── app
 │   ├── favicon.ico
@@ -67,16 +70,32 @@
 │   ├── layout.jsx
 │   ├── page.jsx
 │   ├── settings
+│   │   └── page.jsx
 │   ├── tracking
+│   │   └── page.jsx
 │   └── workouts
+│   └── page.jsx
 ├── components
+│   ├── AlertDialog.jsx
 │   ├── BottomNav.jsx
+│   ├── Button.jsx
 │   ├── DayDivider.jsx
 │   ├── ExerciseCard.jsx
 │   ├── Header.jsx
 │   ├── InfoBox.jsx
-│   └── SectionLabel.jsx
+│   ├── Input.jsx
+│   ├── Loading.jsx
+│   ├── Notify.jsx
+│   ├── SectionLabel.jsx
+│   └── Switch.jsx
+├── context
+│   └── AuthContext.jsx
 ├── data
-└── lib
+│   ├── exercises.json
+│   └── mockWorkouts.js
+├── lib
+│   └── firebase.js
+└── utils
+└── generateWorkout.js
 
-12 directories, 18 files
+15 directories, 34 files
