@@ -24,19 +24,20 @@ const MUSCLE_GROUPS = [
   "Ombro",
   "Tríceps",
   "Bíceps",
-  "Perna",
+  "Pernas",
   "Panturrilha",
   "Abdômen",
 ];
 
 const SettingsPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [showAllWorkouts, setShowAllWorkouts] = useState(false);
+  const [showTodayWorkoutOnly, setShowTodayWorkoutOnly] = useState(false);
   const [showWorkoutForm, setShowWorkoutForm] = useState(false);
   const [workoutConfig, setWorkoutConfig] = useState({
     name: "",
     day: "A",
     areas: [],
+    selectedExercises: {},
     areaCounts: {},
   });
   const {logout, user} = useContext(AuthContext);
@@ -45,12 +46,7 @@ const SettingsPage = () => {
   const [pendingDays, setPendingDays] = useState([]); // Guarda os dias durante a criação
 
   useEffect(() => {
-    const savedSetting = localStorage.getItem(
-      "myfit_settings_show_all_workouts",
-    );
-    setShowAllWorkouts(savedSetting === "true");
-
-    const fetchSavedWorkouts = async () => {
+    const fetchSavedWorkoutsAndSettings = async () => {
       if (user?.uid) {
         try {
           const docRef = doc(db, "workoutPlans", user.uid);
@@ -60,32 +56,51 @@ const SettingsPage = () => {
           } else {
             setSavedWorkouts([]);
           }
+
+          const settingsRef = doc(db, "userSettings", user.uid);
+          const settingsSnap = await getDoc(settingsRef);
+          if (settingsSnap.exists()) {
+            setShowTodayWorkoutOnly(
+              settingsSnap.data().showTodayWorkoutOnly || false,
+            );
+            const dark = settingsSnap.data().isDarkMode || false;
+            setIsDarkMode(dark);
+            if (dark) document.documentElement.classList.add("dark");
+            else document.documentElement.classList.remove("dark");
+          }
         } catch (error) {
-          console.error("Erro ao buscar treinos do Firebase:", error);
+          console.error("Erro ao buscar dados do Firebase:", error);
         }
       }
     };
-    fetchSavedWorkouts();
+    fetchSavedWorkoutsAndSettings();
   }, [user]);
 
-  const handleShowAllWorkoutsToggle = () => {
-    const newValue = !showAllWorkouts;
-    setShowAllWorkouts(newValue);
-    localStorage.setItem("myfit_settings_show_all_workouts", String(newValue));
+  const handleShowTodayWorkoutOnlyToggle = async () => {
+    const newValue = !showTodayWorkoutOnly;
+    setShowTodayWorkoutOnly(newValue);
+    if (user?.uid) {
+      await setDoc(
+        doc(db, "userSettings", user.uid),
+        {showTodayWorkoutOnly: newValue},
+        {merge: true},
+      );
+    }
   };
 
-  // Mock handlers for now
-  const handleClearData = async () => {
-    console.log("Limpando dados...");
-    setSavedWorkouts([]);
+  const handleDarkModeToggle = async () => {
+    const newValue = !isDarkMode;
+    setIsDarkMode(newValue);
+    if (newValue) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+
     if (user?.uid) {
-      try {
-        await setDoc(doc(db, "workoutPlans", user.uid), {plans: []});
-      } catch (error) {
-        console.error("Erro ao limpar no Firebase:", error);
-      }
+      await setDoc(
+        doc(db, "userSettings", user.uid),
+        {isDarkMode: newValue},
+        {merge: true},
+      );
     }
-    alert("Dados locais limpos com sucesso!");
   };
 
   const handleLogout = async () => {
@@ -103,16 +118,20 @@ const SettingsPage = () => {
         ? prev.areas.filter((a) => a !== area)
         : [...prev.areas, area];
 
+      const newSelectedExercises = {...prev.selectedExercises};
       const newAreaCounts = {...prev.areaCounts};
+
       if (isSelected) {
+        delete newSelectedExercises[area];
         delete newAreaCounts[area];
       } else {
-        newAreaCounts[area] = 4; // Padrão de 4 exercícios ao selecionar
+        newAreaCounts[area] = 3; // Padrão de 3 exercícios ao selecionar
       }
 
       return {
         ...prev,
         areas: newAreas,
+        selectedExercises: newSelectedExercises,
         areaCounts: newAreaCounts,
       };
     });
@@ -120,17 +139,22 @@ const SettingsPage = () => {
 
   const handleEditWorkout = (index) => {
     const wk = savedWorkouts[index];
-    const areas = wk.badge.split(" • ");
+    const areas = wk.badge.split(" • ").map((a) => a.split(" ")[0]);
+    const selectedExercises = {};
     const areaCounts = {};
     areas.forEach((area) => {
       const sec = wk.sections?.find((s) => s.label === `Foco: ${area}`);
-      areaCounts[area] = sec?.exercises?.length || 4;
+      if (sec && sec.exercises) {
+        selectedExercises[area] = sec.exercises.map((ex) => ex.id);
+        areaCounts[area] = sec.exercises.length;
+      }
     });
 
     setWorkoutConfig({
       name: wk.title,
       day: wk.id,
       areas: areas,
+      selectedExercises: selectedExercises,
       areaCounts: areaCounts,
     });
     setEditingIndex(index);
@@ -157,6 +181,7 @@ const SettingsPage = () => {
       name: "",
       day: nextDays[workoutConfig.day] || "A",
       areas: [],
+      selectedExercises: {},
       areaCounts: {},
     });
   };
@@ -165,32 +190,70 @@ const SettingsPage = () => {
     setPendingDays(pendingDays.filter((_, i) => i !== index));
   };
 
+  const handleEditPendingDay = (index) => {
+    const dayToEdit = pendingDays[index];
+    setWorkoutConfig(dayToEdit);
+    setPendingDays(pendingDays.filter((_, i) => i !== index));
+  };
+
+  const handleAreaCountChange = (area, delta) => {
+    setWorkoutConfig((prev) => {
+      const currentCount = prev.areaCounts?.[area] || 3;
+      const newCount = Math.max(1, Math.min(10, currentCount + delta));
+      return {
+        ...prev,
+        areaCounts: {
+          ...prev.areaCounts,
+          [area]: newCount,
+        },
+      };
+    });
+  };
+
   // Função que gera a Ficha Completa após acumular vários dias
   const handleSavePlan = async (generateExercises = false) => {
     let newDays = [];
 
     pendingDays.forEach((dayConf) => {
       let sections = [];
-      if (generateExercises) {
-        dayConf.areas.forEach((area) => {
-          const matching = exercisesData.filter(
-            (ex) => ex.muscleGroup === area || ex.muscle === area,
-          );
-          if (matching.length > 0) {
-            const count = dayConf.areaCounts?.[area] || 4;
-            const shuffled = [...matching].sort(() => 0.5 - Math.random());
-            sections.push({
-              label: `Foco: ${area}`,
-              exercises: shuffled.slice(0, count),
-            });
-          }
-        });
-      }
+      dayConf.areas.forEach((area) => {
+        let selectedForArea = [];
+        const matching = exercisesData.filter(
+          (ex) => ex.muscleGroup === area || ex.muscle === area,
+        );
+
+        if (dayConf.selectedExercises?.[area]?.length > 0) {
+          const selectedIds = dayConf.selectedExercises[area];
+          // Mescla com exercício manual e preserva a defaultMeta
+          selectedForArea = selectedIds
+            .map((id) => matching.find((ex) => ex.id === id))
+            .filter(Boolean);
+        } else if (generateExercises && matching.length > 0) {
+          // Caso deixe em branco, sorteia a quantidade definida
+          const count = dayConf.areaCounts?.[area] || 3;
+          const shuffled = [...matching].sort(() => 0.5 - Math.random());
+          selectedForArea = shuffled.slice(0, count);
+        }
+
+        if (selectedForArea.length > 0) {
+          sections.push({
+            label: `Foco: ${area}`,
+            exercises: selectedForArea,
+          });
+        }
+      });
 
       newDays.push({
         id: dayConf.day,
         title: dayConf.name,
-        badge: dayConf.areas.join(" • "),
+        badge: dayConf.areas
+          .map((area) => {
+            const count =
+              sections.find((s) => s.label === `Foco: ${area}`)?.exercises
+                ?.length || 0;
+            return `${area} (${count})`;
+          })
+          .join(" • "),
         sections: sections,
       });
     });
@@ -225,7 +288,13 @@ const SettingsPage = () => {
 
     setShowWorkoutForm(false);
     setPendingDays([]);
-    setWorkoutConfig({name: "", day: "A", areas: [], areaCounts: {}});
+    setWorkoutConfig({
+      name: "",
+      day: "A",
+      areas: [],
+      selectedExercises: {},
+      areaCounts: {},
+    });
   };
 
   // Função específica para quando o usuário edita apenas um dia isolado
@@ -241,30 +310,51 @@ const SettingsPage = () => {
       return;
     }
 
-    let sections = savedWorkouts[editingIndex].sections || [];
+    let sections = [];
+    workoutConfig.areas.forEach((area) => {
+      let selectedForArea = [];
+      const matching = exercisesData.filter(
+        (ex) => ex.muscleGroup === area || ex.muscle === area,
+      );
 
-    if (generateExercises) {
-      sections = [];
-      workoutConfig.areas.forEach((area) => {
-        const matching = exercisesData.filter(
-          (ex) => ex.muscleGroup === area || ex.muscle === area,
+      if (workoutConfig.selectedExercises?.[area]?.length > 0) {
+        const selectedIds = workoutConfig.selectedExercises[area];
+        selectedForArea = selectedIds
+          .map((id) => matching.find((ex) => ex.id === id))
+          .filter(Boolean);
+      } else if (generateExercises && matching.length > 0) {
+        const count = workoutConfig.areaCounts?.[area] || 3;
+        const shuffled = [...matching].sort(() => 0.5 - Math.random());
+        selectedForArea = shuffled.slice(0, count);
+      } else {
+        // Preserva os exercícios existentes na edição se não for para regerar
+        const existingSection = savedWorkouts[editingIndex]?.sections?.find(
+          (s) => s.label === `Foco: ${area}`,
         );
-        if (matching.length > 0) {
-          const count = workoutConfig.areaCounts?.[area] || 4;
-          const shuffled = [...matching].sort(() => 0.5 - Math.random());
-          const selected = shuffled.slice(0, count);
-          sections.push({
-            label: `Foco: ${area}`,
-            exercises: selected,
-          });
+        if (existingSection?.exercises) {
+          selectedForArea = existingSection.exercises;
         }
-      });
-    }
+      }
+
+      if (selectedForArea.length > 0) {
+        sections.push({
+          label: `Foco: ${area}`,
+          exercises: selectedForArea,
+        });
+      }
+    });
 
     const newWorkout = {
       id: workoutConfig.day,
       title: workoutConfig.name,
-      badge: workoutConfig.areas.join(" • "),
+      badge: workoutConfig.areas
+        .map((area) => {
+          const count =
+            sections.find((s) => s.label === `Foco: ${area}`)?.exercises
+              ?.length || 0;
+          return `${area} (${count})`;
+        })
+        .join(" • "),
       sections: sections,
     };
 
@@ -286,7 +376,13 @@ const SettingsPage = () => {
 
     setShowWorkoutForm(false);
     setEditingIndex(null);
-    setWorkoutConfig({name: "", day: "A", areas: [], areaCounts: {}});
+    setWorkoutConfig({
+      name: "",
+      day: "A",
+      areas: [],
+      selectedExercises: {},
+      areaCounts: {},
+    });
   };
 
   const handleDeleteWorkout = async (index) => {
@@ -321,21 +417,18 @@ const SettingsPage = () => {
               <FiMoon size={20} className="text-slate-600" />
               <span className="font-semibold text-slate-800">Tema Escuro</span>
             </div>
-            <Switch
-              checked={isDarkMode}
-              onChange={() => setIsDarkMode(!isDarkMode)}
-            />
+            <Switch checked={isDarkMode} onChange={handleDarkModeToggle} />
           </div>
           <div className="flex items-center justify-between mt-2 border-t border-slate-100 pt-3">
             <div className="flex items-center gap-3">
               <FiEye size={20} className="text-slate-600" />
               <span className="font-semibold text-slate-800">
-                Ver todos os treinos
+                Ver treinos do dia
               </span>
             </div>
             <Switch
-              checked={showAllWorkouts}
-              onChange={handleShowAllWorkoutsToggle}
+              checked={showTodayWorkoutOnly}
+              onChange={handleShowTodayWorkoutOnlyToggle}
             />
           </div>
         </div>
@@ -376,13 +469,6 @@ const SettingsPage = () => {
                         </span>
                         <span className="text-[0.8rem] text-slate-500 font-medium">
                           {wk.badge}
-                        </span>
-                        <span className="text-[0.75rem] text-slate-400 font-bold mt-1">
-                          {wk.sections?.reduce(
-                            (acc, sec) => acc + sec.exercises.length,
-                            0,
-                          ) || 0}{" "}
-                          exercícios
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -430,54 +516,83 @@ const SettingsPage = () => {
                 <div className="flex flex-wrap gap-2">
                   {MUSCLE_GROUPS.map((area) => {
                     const isSelected = workoutConfig.areas.includes(area);
-                    return isSelected ? (
+                    const hasManualSelection =
+                      workoutConfig.selectedExercises?.[area]?.length > 0;
+
+                    return (
                       <div
                         key={area}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-orange-100 border border-orange-600 rounded-full shadow-sm"
+                        className="flex flex-col items-center gap-2"
                       >
                         <button
                           type="button"
                           onClick={() => toggleArea(area)}
-                          className="text-[0.8rem] font-semibold text-orange-800 hover:text-orange-900"
+                          className={`px-3 py-1.5 text-[0.8rem] font-semibold rounded-full border transition-colors ${
+                            isSelected
+                              ? "bg-orange-600 text-white border-orange-600 shadow-sm"
+                              : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50"
+                          }`}
                         >
                           {area}
                         </button>
-                        <div className="h-4 w-[1px] bg-orange-300"></div>
-                        <div className="flex items-center gap-1">
-                          <span className="text-[0.7rem] text-orange-700 font-bold">
-                            Qtd:
-                          </span>
-                          <input
-                            type="number"
-                            min="1"
-                            max="10"
-                            value={workoutConfig.areaCounts?.[area] || 4}
-                            onChange={(e) =>
-                              setWorkoutConfig((prev) => ({
-                                ...prev,
-                                areaCounts: {
-                                  ...prev.areaCounts,
-                                  [area]: parseInt(e.target.value) || 1,
-                                },
-                              }))
-                            }
-                            className="w-10 h-6 text-center text-[0.8rem] font-bold rounded-md bg-white border border-orange-300 focus:outline-none focus:border-orange-500"
-                          />
-                        </div>
+                        {isSelected && !hasManualSelection && (
+                          <div className="flex items-center justify-center gap-2 bg-slate-100 border border-slate-200 rounded-full px-1 py-0.5">
+                            <button
+                              type="button"
+                              onClick={() => handleAreaCountChange(area, -1)}
+                              className="w-6 h-6 flex items-center justify-center bg-slate-200 text-slate-700 rounded-full font-bold hover:bg-slate-300 transition-colors active:scale-90"
+                            >
+                              -
+                            </button>
+                            <span className="w-5 text-center text-slate-900 text-sm font-bold">
+                              {workoutConfig.areaCounts?.[area] || 3}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleAreaCountChange(area, 1)}
+                              className="w-6 h-6 flex items-center justify-center bg-slate-200 text-slate-700 rounded-full font-bold hover:bg-slate-300 transition-colors active:scale-90"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
                       </div>
-                    ) : (
-                      <button
-                        key={area}
-                        type="button"
-                        onClick={() => toggleArea(area)}
-                        className="px-3 py-1.5 text-[0.8rem] font-semibold rounded-full border transition-colors bg-white text-slate-600 border-slate-300 hover:bg-slate-50"
-                      >
-                        {area}
-                      </button>
                     );
                   })}
                 </div>
               </div>
+
+              {workoutConfig.areas.length > 0 && (
+                <div className="flex flex-col gap-3 mt-3">
+                  {workoutConfig.areas.map((area) => {
+                    const options = exercisesData
+                      .filter(
+                        (ex) => ex.muscleGroup === area || ex.muscle === area,
+                      )
+                      .map((ex) => ({label: ex.name, value: ex.id}));
+                    return (
+                      <Input
+                        key={area}
+                        type="multiselect"
+                        name={`exercises_${area}`}
+                        label={`Exercícios de ${area} (Opcional)`}
+                        placeholder="Selecione ou deixe vazio p/ sortear"
+                        data={options}
+                        value={workoutConfig.selectedExercises?.[area] || []}
+                        onChange={(e) => {
+                          setWorkoutConfig((prev) => ({
+                            ...prev,
+                            selectedExercises: {
+                              ...prev.selectedExercises,
+                              [area]: e.target.value,
+                            },
+                          }));
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+              )}
 
               {editingIndex !== null ? (
                 <div className="flex flex-col gap-3 mt-4">
@@ -498,6 +613,7 @@ const SettingsPage = () => {
                           name: "",
                           day: "A",
                           areas: [],
+                          selectedExercises: {},
                           areaCounts: {},
                         });
                       }}
@@ -539,15 +655,32 @@ const SettingsPage = () => {
                               {pd.day} - {pd.name}
                             </span>
                             <span className="text-[0.75rem] text-slate-500 font-medium">
-                              {pd.areas.join(" • ")}
+                              {pd.areas
+                                .map(
+                                  (a) =>
+                                    `${a} (${
+                                      pd.selectedExercises?.[a]?.length ||
+                                      pd.areaCounts?.[a] ||
+                                      3
+                                    })`,
+                                )
+                                .join(" • ")}
                             </span>
                           </div>
-                          <button
-                            onClick={() => handleRemovePendingDay(i)}
-                            className="text-red-500 hover:text-red-700 p-2"
-                          >
-                            <FiTrash2 size={16} />
-                          </button>
+                          <div className="flex items-center">
+                            <button
+                              onClick={() => handleEditPendingDay(i)}
+                              className="p-2 text-slate-400 hover:text-orange-500 transition-colors"
+                            >
+                              <FiEdit2 size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleRemovePendingDay(i)}
+                              className="text-red-500 hover:text-red-700 p-2"
+                            >
+                              <FiTrash2 size={16} />
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -563,6 +696,7 @@ const SettingsPage = () => {
                           name: "",
                           day: "A",
                           areas: [],
+                          selectedExercises: {},
                           areaCounts: {},
                         });
                       }}
@@ -589,15 +723,6 @@ const SettingsPage = () => {
           <h3 className="text-[0.8rem] font-bold text-slate-400 uppercase mb-2">
             Gerenciamento
           </h3>
-          <Button
-            variant="secondary"
-            wfull
-            onClick={handleClearData}
-            className="!justify-start !h-12 !text-base !font-semibold"
-          >
-            <FiTrash2 size={18} className="mr-3" />
-            Limpar Dados Locais
-          </Button>
           <Button
             variant="error"
             wfull

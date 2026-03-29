@@ -9,62 +9,69 @@ import Loading from "@/components/Loading";
 import {AuthContext} from "@/context/AuthContext";
 import {db} from "@/lib/firebase";
 import {doc, getDoc, setDoc} from "firebase/firestore";
-
-// A constante foi movida para fora para ser usada como estado inicial.
-// No futuro, isso virá de uma chamada de API para o Firebase.
-import {WORKOUT_DATA as INITIAL_WORKOUT_DATA} from "@/data/mockWorkouts";
+import Link from "next/link";
 
 const WorkoutsPage = () => {
   const [workouts, setWorkouts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeWorkoutId, setActiveWorkoutId] = useState(null);
-  const [showAllWorkouts, setShowAllWorkouts] = useState(false);
+  const [showTodayWorkoutOnly, setShowTodayWorkoutOnly] = useState(false);
   const {user} = useContext(AuthContext);
 
   // Simula o carregamento dos dados do treino ao montar o componente.
   useEffect(() => {
     const fetchWorkouts = async () => {
-      const showAllSetting =
-        localStorage.getItem("myfit_settings_show_all_workouts") === "true";
-
-      if (user?.uid) {
-        try {
+      setLoading(true);
+      try {
+        if (user?.uid) {
           const docRef = doc(db, "workoutPlans", user.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists() && docSnap.data().plans?.length > 0) {
             setWorkouts(docSnap.data().plans);
           } else {
-            setWorkouts(INITIAL_WORKOUT_DATA);
+            setWorkouts([]);
           }
-        } catch (error) {
-          console.error("Erro ao buscar treinos do Firebase:", error);
-          setWorkouts(INITIAL_WORKOUT_DATA);
+
+          const settingsRef = doc(db, "userSettings", user.uid);
+          const settingsSnap = await getDoc(settingsRef);
+          if (settingsSnap.exists()) {
+            setShowTodayWorkoutOnly(
+              settingsSnap.data().showTodayWorkoutOnly || false,
+            );
+            if (settingsSnap.data().isDarkMode) {
+              document.documentElement.classList.add("dark");
+            } else {
+              document.documentElement.classList.remove("dark");
+            }
+          }
+        } else {
+          setWorkouts([]);
         }
-      } else {
-        setWorkouts(INITIAL_WORKOUT_DATA);
+      } catch (error) {
+        console.error("Erro ao buscar treinos do Firebase:", error);
+        setWorkouts([]);
+      } finally {
+        // Lógica de mapeamento dos dias da semana (0 = Domingo ... 6 = Sábado)
+        const today = new Date().getDay();
+        let todayWorkoutId = null;
+
+        switch (today) {
+          case 1: // Segunda
+          case 4: // Quinta
+            todayWorkoutId = "A";
+            break;
+          case 2: // Terça
+          case 5: // Sexta
+            todayWorkoutId = "B";
+            break;
+          case 3: // Quarta
+            todayWorkoutId = "C";
+            break;
+        }
+
+        setActiveWorkoutId(todayWorkoutId);
+        setLoading(false);
       }
-
-      setShowAllWorkouts(showAllSetting);
-      // Lógica de mapeamento dos dias da semana (0 = Domingo ... 6 = Sábado)
-      const today = new Date().getDay();
-      let todayWorkoutId = null;
-
-      switch (today) {
-        case 1: // Segunda
-        case 4: // Quinta
-          todayWorkoutId = "A";
-          break;
-        case 2: // Terça
-        case 5: // Sexta
-          todayWorkoutId = "B";
-          break;
-        case 3: // Quarta
-          todayWorkoutId = "C";
-          break;
-      }
-
-      setActiveWorkoutId(todayWorkoutId);
-      setLoading(false);
     };
     fetchWorkouts();
   }, [user]);
@@ -155,19 +162,30 @@ const WorkoutsPage = () => {
       <div className="max-w-[600px] w-full mx-auto pb-6">
         <Header />
 
-        {showAllWorkouts && workouts.length > 0 ? (
+        {!showTodayWorkoutOnly && workouts.length > 0 ? (
           workouts.map((workout) => renderWorkout(workout))
         ) : todayWorkout ? (
           renderWorkout(todayWorkout)
         ) : (
           <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-center mt-6">
             <h3 className="text-lg font-bold text-slate-800 mb-2">
-              Dia de Descanso! 🛌
+              {workouts.length === 0
+                ? "Nenhum Treino Criado 📝"
+                : "Dia de Descanso! 🛌"}
             </h3>
-            <p className="text-[0.9rem] text-slate-500 font-medium">
-              Você não tem treinos programados para hoje. Aproveite para
-              recuperar as energias ou faça um cardio leve.
+            <p className="text-[0.9rem] text-slate-500 font-medium mb-4">
+              {workouts.length === 0
+                ? "Você ainda não possui treinos cadastrados. Acesse os ajustes para gerar sua ficha."
+                : "Você não tem treinos programados para hoje. Aproveite para recuperar as energias ou faça um cardio leve."}
             </p>
+            {workouts.length === 0 && (
+              <Link
+                href="/settings"
+                className="inline-block bg-orange-600 text-white font-bold px-6 py-3 rounded-lg shadow-sm hover:bg-orange-700 transition-colors"
+              >
+                Criar Meu Treino
+              </Link>
+            )}
           </div>
         )}
       </div>

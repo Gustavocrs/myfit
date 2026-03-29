@@ -1,9 +1,48 @@
+"use client";
+
+import {useEffect, useContext, useState} from "react";
 import Header from "@/components/Header";
 import InfoBox, {InfoSubtitle} from "@/components/InfoBox";
 import Link from "next/link";
 import {FiActivity, FiTrendingUp} from "react-icons/fi";
+import {AuthContext} from "@/context/AuthContext";
+import {db} from "@/lib/firebase";
+import {doc, getDoc} from "firebase/firestore";
 
 const Home = () => {
+  const {user} = useContext(AuthContext);
+  const [pesoAtual, setPesoAtual] = useState("--");
+
+  useEffect(() => {
+    const fetchSettingsAndEvals = async () => {
+      if (user?.uid) {
+        try {
+          // Aplica o tema escuro se estiver ativado
+          const settingsRef = doc(db, "userSettings", user.uid);
+          const settingsSnap = await getDoc(settingsRef);
+          if (settingsSnap.exists() && settingsSnap.data().isDarkMode) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+
+          // Puxa o último peso registrado na Evolução
+          const evalsRef = doc(db, "evaluations", user.uid);
+          const evalsSnap = await getDoc(evalsRef);
+          if (evalsSnap.exists() && evalsSnap.data().history?.length > 0) {
+            const latestEval = evalsSnap.data().history[0];
+            if (latestEval.bio?.peso) {
+              setPesoAtual(latestEval.bio.peso);
+            }
+          }
+        } catch (error) {
+          console.error("Erro ao carregar dados da Home:", error);
+        }
+      }
+    };
+    fetchSettingsAndEvals();
+  }, [user]);
+
   return (
     <main className="min-h-screen bg-slate-100 py-3 px-3">
       <div className="max-w-[600px] w-full mx-auto pb-6">
@@ -30,7 +69,7 @@ const Home = () => {
               Peso Atual
             </span>
             <span className="text-[1.1rem] font-black text-slate-800 uppercase">
-              -- kg
+              {pesoAtual !== "--" ? `${pesoAtual} kg` : "-- kg"}
             </span>
           </div>
         </div>
