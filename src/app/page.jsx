@@ -1,301 +1,57 @@
 import Header from "@/components/Header";
-import DayDivider from "@/components/DayDivider";
-import SectionLabel from "@/components/SectionLabel";
-import ExerciseCard from "@/components/ExerciseCard";
+import InfoBox, {InfoSubtitle} from "@/components/InfoBox";
+import Link from "next/link";
+import {FiActivity, FiTrendingUp} from "react-icons/fi";
 
-// O WORKOUT_DATA foi movido para cá, saindo da página inicial.
-const WORKOUT_DATA = [
-  {
-    id: "A",
-    title: "Treino A: Seg / Qui",
-    badge: "Braços & Ombros",
-    sections: [
-      {
-        label: "👑 Bíceps e Tríceps",
-        exercises: [
-          {
-            name: "1. Bi-Set: Rosca Scott (Máq) + Tríceps Corda",
-            meta: "4 x 10-12",
-            muscle: "Bíceps / Tríceps",
-            rest: "⏱️ 90s",
-            detail: "Isolamento",
-            color: "purple",
-            instruction: (
-              <>
-                <strong className="text-slate-900">
-                  Sem descanso entre os dois:
-                </strong>{" "}
-                Faça a Rosca na máquina Scott e vá direto para a polia alta. Só
-                descanse 90s após completar ambos. Falha total apenas na série
-                4.
-              </>
-            ),
-          },
-          {
-            name: "2. Bi-Set: Rosca 45º + Tríceps Francês (Polia)",
-            meta: "3 x 10-12",
-            muscle: "Bíceps / Tríceps",
-            rest: "⏱️ 90s",
-            detail: "Alongamento",
-            color: "purple",
-            instruction:
-              "No francês, banco a 90º de costas para a polia baixa com corda. Coluna totalmente colada no banco, zerando a compressão discal.",
-          },
-        ],
-      },
-      {
-        label: "🛡️ Construção V-Taper",
-        exercises: [
-          {
-            name: "3. Elevação Lateral (Sentado)",
-            meta: "4 x 12-15",
-            muscle: "Ombro",
-            rest: "⏱️ 60s",
-            detail: "1 Drop-Set",
-            color: "red",
-            instruction: (
-              <>
-                <strong className="text-slate-900">Obrigatório sentado.</strong>{" "}
-                Elimina oscilação lombar. Faça 1 único Drop-set na última série
-                (reduza o peso 30% e vá até falhar de novo).
-              </>
-            ),
-          },
-          {
-            name: "4. Desenv. Arnold (Sentado)",
-            meta: "3 x 10",
-            muscle: "Ombro",
-            rest: "⏱️ 90s",
-            detail: "Massa Anterior",
-            color: "none",
-            instruction:
-              "Costas 100% coladas no encosto. Empurre focado na contração. Não crie arco lombar em nenhuma hipótese.",
-          },
-          {
-            name: "5. Crucifixo Inverso (Máquina)",
-            meta: "3 x 12-15",
-            muscle: "Ombro Posterior",
-            rest: "⏱️ 60s",
-            detail: "Postura",
-            color: "none",
-            instruction:
-              "Foque em esmagar a parte de trás do ombro para tracionar a postura de quem trabalha sentado o dia todo.",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "B",
-    title: "Treino B: Ter / Sex",
-    badge: "Peito & Costas",
-    sections: [
-      {
-        label: "👑 Densidade e Estética",
-        exercises: [
-          {
-            name: "1. Puxada Alta (Pulley)",
-            meta: "4 x 10-12",
-            muscle: "Costas",
-            rest: "⏱️ 90 a 120s",
-            detail: "Expansão",
-            color: "blue",
-            instruction:
-              "Coluna estritamente vertical. Traga a barra até o topo do peito e segure contração isométrica por 2s.",
-          },
-          {
-            name: "2. Supino Inclinado (Halter)",
-            meta: "4 x 10",
-            muscle: "Peito",
-            rest: "⏱️ 90 a 120s",
-            detail: "Peitoral Superior",
-            color: "orange",
-            instruction:
-              'Preenche a porção clavicular combatendo o aspecto de "peito caído". Desça o peso em 3 a 4 segundos.',
-          },
-          {
-            name: "3. Remada Baixa (Triângulo)",
-            meta: "3 x 12",
-            muscle: "Costas",
-            rest: "⏱️ 90s",
-            detail: "Miolo das Costas",
-            color: "blue",
-            instruction: (
-              <>
-                <strong className="text-slate-900">Alerta Hérnia:</strong>{" "}
-                Joelhos semiflexionados. O tronco fica imóvel como estátua;
-                apenas os braços puxam.
-              </>
-            ),
-          },
-        ],
-      },
-      {
-        label: "🛡️ Tensão Contínua",
-        exercises: [
-          {
-            name: "4. Peck Deck (Voador)",
-            meta: "3 x 12-15",
-            muscle: "Peito",
-            rest: "⏱️ 60s",
-            detail: "Rest-Pause",
-            color: "none",
-            instruction:
-              "Costas apoiadas. Na última série, alcance a falha, descanse 15s na própria máquina e faça mais repetições.",
-          },
-          {
-            name: "5. Cross-over (Polia Alta)",
-            meta: "3 x 12-15",
-            muscle: "Peito",
-            rest: "⏱️ 60 a 90s",
-            detail: "Corte Inferior",
-            color: "orange",
-            instruction:
-              "Fechamento dos cabos de cima para baixo. Isola a porção externa do peito (flacidez). Core muito contraído.",
-          },
-          {
-            name: "6. Elev. Lateral (Cabo Uni)",
-            meta: "3 x 15",
-            muscle: "Ombro",
-            rest: "⏱️ 60s",
-            detail: "Pump Final",
-            color: "red",
-            instruction:
-              "Tensão constante da polia baixa. Carga leve a moderada apenas para manter o músculo bombeado.",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "C",
-    title: "Treino C: Quarta",
-    badge: "Glúteos & Pernas",
-    sections: [
-      {
-        label: "👑 Construção (Lombar Safe)",
-        exercises: [
-          {
-            name: "1. Elevação Pélvica (Máquina/Barra)",
-            meta: "4 x 10-12",
-            muscle: "Glúteo Máximo",
-            rest: "⏱️ 120s",
-            detail: "Pico de Contração",
-            color: "green",
-            instruction: (
-              <>
-                Apoie as escápulas no banco. Suba o quadril e{" "}
-                <strong className="text-slate-900">
-                  contraia o glúteo intencionalmente no topo por 2 a 3 segundos
-                </strong>
-                . Sem carga compressiva na coluna.
-              </>
-            ),
-          },
-          {
-            name: "2. Leg Press 45º (Pés Altos)",
-            meta: "3 x 10-12",
-            muscle: "Glúteo / Posterior",
-            rest: "⏱️ 120s",
-            detail: "Foco Inferior",
-            color: "green",
-            instruction:
-              "Pés posicionados na parte alta e afastada da plataforma. A força deve sair estritamente dos calcanhares. Não desça o peso a ponto de descolar a lombar do encosto.",
-          },
-          {
-            name: "3. Cadeira Abdutora",
-            meta: "3 x 15-20",
-            muscle: "Glúteo Médio",
-            rest: "⏱️ 90s",
-            detail: "Formato Redondo",
-            color: "green",
-            instruction: (
-              <>
-                Descole as costas do encosto e{" "}
-                <strong className="text-slate-900">
-                  incline o tronco a 45º para a frente
-                </strong>{" "}
-                segurando na máquina. Isso elimina o hip dip e recruta a
-                lateral.
-              </>
-            ),
-          },
-          {
-            name: "4. Mesa Flexora",
-            meta: "3 x 12",
-            muscle: "Posterior Coxa",
-            rest: "⏱️ 90s",
-            detail: "Isolamento",
-            color: "green",
-            instruction:
-              "Deitado de bruços, mantenha o quadril colado na prancha para evitar que a lombar roube o movimento durante a flexão.",
-          },
-          {
-            name: "5. Glúteo Polia Baixa (Cabo)",
-            meta: "3 x 12-15",
-            muscle: "Glúteo Máximo",
-            rest: "⏱️ 60s",
-            detail: "Unilateral",
-            color: "green",
-            instruction: (
-              <>
-                De frente para a polia, tronco levemente inclinado. Chute para
-                trás focando exclusivamente em contrair o glúteo,{" "}
-                <strong className="text-slate-900">sem arquear a lombar</strong>
-                .
-              </>
-            ),
-          },
-          {
-            name: "6. Cadeira Extensora",
-            meta: "3 x 12-15",
-            muscle: "Quadríceps",
-            rest: "⏱️ 90s",
-            detail: "Lapidação",
-            color: "green",
-            instruction:
-              'Costas 100% apoiadas no banco. Foque na porção final do movimento (quando a perna estica) para desenhar a "gota" da coxa.',
-          },
-        ],
-      },
-    ],
-  },
-];
-
-const WorkoutsPage = () => {
+const Home = () => {
   return (
     <main className="min-h-screen bg-slate-100 py-3 px-3">
       <div className="max-w-[600px] w-full mx-auto pb-6">
         <Header />
 
-        {WORKOUT_DATA.map((day) => (
-          <div key={day.id}>
-            <DayDivider title={day.title} badge={day.badge} />
+        <h2 className="text-[1.1rem] font-extrabold text-slate-800 uppercase mb-4 mt-6">
+          Visão Geral
+        </h2>
 
-            {day.sections.map((section, idx) => (
-              <div key={idx}>
-                <SectionLabel text={section.label} />
-
-                {section.exercises.map((ex, exIdx) => (
-                  <ExerciseCard
-                    key={exIdx}
-                    name={ex.name}
-                    meta={ex.meta}
-                    muscle={ex.muscle}
-                    rest={ex.rest}
-                    detail={ex.detail}
-                    color={ex.color}
-                  >
-                    {ex.instruction}
-                  </ExerciseCard>
-                ))}
-              </div>
-            ))}
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center text-center gap-2">
+            <FiActivity size={28} className="text-orange-600" />
+            <span className="text-[0.8rem] text-slate-500 font-bold uppercase">
+              Treino Atual
+            </span>
+            <span className="text-[1.1rem] font-black text-slate-800 uppercase">
+              Treino A
+            </span>
           </div>
-        ))}
+
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center text-center gap-2">
+            <FiTrendingUp size={28} className="text-green-600" />
+            <span className="text-[0.8rem] text-slate-500 font-bold uppercase">
+              Peso Atual
+            </span>
+            <span className="text-[1.1rem] font-black text-slate-800 uppercase">
+              -- kg
+            </span>
+          </div>
+        </div>
+
+        <Link
+          href="/workouts"
+          className="block w-full bg-slate-900 text-white text-center py-4 rounded-xl font-extrabold uppercase tracking-wide shadow-md mb-8 transition-transform active:scale-[0.98]"
+        >
+          Acessar Meus Treinos
+        </Link>
+
+        <div className="flex flex-col gap-4 mt-10">
+          <InfoBox title="🔥 Próximos Passos">
+            <InfoSubtitle>Configuração Inicial</InfoSubtitle>
+            Acesse a aba de evolução para registrar suas medidas e sua primeira
+            foto de acompanhamento.
+          </InfoBox>
+        </div>
       </div>
     </main>
   );
 };
 
-export default WorkoutsPage;
+export default Home;

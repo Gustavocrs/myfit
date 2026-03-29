@@ -59,17 +59,24 @@
 ├── public
 ├── README.md
 └── src
+├── api
+│   └── upload
 ├── app
 │   ├── favicon.ico
 │   ├── globals.css
 │   ├── layout.jsx
-│   └── page.jsx
-└── components
-├── BottomNav.jsx
-├── DayDivider.jsx
-├── ExerciseCard.jsx
-├── Header.jsx
-├── InfoBox.jsx
-└── SectionLabel.jsx
+│   ├── page.jsx
+│   ├── settings
+│   ├── tracking
+│   └── workouts
+├── components
+│   ├── BottomNav.jsx
+│   ├── DayDivider.jsx
+│   ├── ExerciseCard.jsx
+│   ├── Header.jsx
+│   ├── InfoBox.jsx
+│   └── SectionLabel.jsx
+├── data
+└── lib
 
-5 directories, 18 files
+12 directories, 18 files
