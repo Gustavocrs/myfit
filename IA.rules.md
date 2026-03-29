@@ -62,11 +62,14 @@
 ├── app
 │   ├── favicon.ico
 │   ├── globals.css
-│   ├── index.html
 │   ├── layout.jsx
 │   └── page.jsx
 └── components
-├── basic
-└── layout
+├── BottomNav.jsx
+├── DayDivider.jsx
+├── ExerciseCard.jsx
+├── Header.jsx
+├── InfoBox.jsx
+└── SectionLabel.jsx
 
-7 directories, 13 files
+5 directories, 18 files

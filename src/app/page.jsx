@@ -1,9 +1,9 @@
-import Header from "../components/Header";
-import DayDivider from "../components/DayDivider";
-import SectionLabel from "../components/SectionLabel";
-import ExerciseCard from "../components/ExerciseCard";
-import InfoBox, {InfoSubtitle} from "../components/InfoBox";
+import Header from "@/components/Header";
+import DayDivider from "@/components/DayDivider";
+import SectionLabel from "@/components/SectionLabel";
+import ExerciseCard from "@/components/ExerciseCard";
 
+// O WORKOUT_DATA foi movido para cá, saindo da página inicial.
 const WORKOUT_DATA = [
   {
     id: "A",
@@ -262,10 +262,10 @@ const WORKOUT_DATA = [
   },
 ];
 
-export default function Home() {
+const WorkoutsPage = () => {
   return (
     <main className="min-h-screen bg-slate-100 py-3 px-3">
-      <div className="max-w-[600px] w-full mx-auto pb-10">
+      <div className="max-w-[600px] w-full mx-auto pb-6">
         <Header />
 
         {WORKOUT_DATA.map((day) => (
@@ -293,35 +293,9 @@ export default function Home() {
             ))}
           </div>
         ))}
-
-        <div className="flex flex-col gap-4 mt-10">
-          <InfoBox title="🔥 Módulo Casa & Recomposição">
-            <InfoSubtitle>Core (Em Casa)</InfoSubtitle>
-            Prancha Isométrica, Dead Bug e Stomach Vacuum diários.
-            <br />
-            <InfoSubtitle>Cardio</InfoSubtitle>
-            30-40 min diários - Bicicleta, Elíptico ou Caminhada Inclinada (Zero
-            Impacto).
-          </InfoBox>
-
-          <InfoBox title="⚡ Nutrição" isGreen={true}>
-            <InfoSubtitle isGreen={true}>Desjejum / Pós-Treino</InfoSubtitle>
-            Whey Soldiers: 25g
-            <br />
-            Creatina Soldiers: 5g
-            <InfoSubtitle isGreen={true}>Pré-Treino (30 min)</InfoSubtitle>
-            Taurina Soldiers: 1g a 2g
-          </InfoBox>
-
-          <InfoBox title="🛡️ Diretrizes SNC">
-            <div className="mt-2 text-[0.95rem] text-slate-700 font-medium">
-              Falha Concêntrica: Somente na última série do exercício.
-              <br />
-              Demais séries: 1 a 2 reps de reserva.
-            </div>
-          </InfoBox>
-        </div>
       </div>
     </main>
   );
-}
+};
+
+export default WorkoutsPage;
