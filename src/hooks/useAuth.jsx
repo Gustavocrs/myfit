@@ -8,7 +8,12 @@
 
 import {useState, useEffect} from "react";
 import {auth} from "@/lib/firebase";
-import {onAuthStateChanged, signInWithPopup, signOut, GoogleAuthProvider} from "firebase/auth";
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut,
+  GoogleAuthProvider,
+} from "firebase/auth";
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -56,23 +61,15 @@ export const useAuth = () => {
         throw new Error(
           "Erro de Domínio: O domínio atual não está autorizado no Firebase Console.",
         );
-      } else if (error.code === "auth/operation-not-supported-in-this-environment") {
+      } else if (
+        error.code === "auth/operation-not-supported-in-this-environment"
+      ) {
         throw new Error(
           "Autenticação pop-up não suportada neste ambiente. Tente em um navegador desktop.",
         );
       } else {
         throw new Error(`Falha no login: ${error.message}`);
       }
-    }
-  };
-
-  co  throw error;
-    nst logout = async () => {
-    if (!auth) return;
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error("❌ Erro ao deslogar:", error);
     }
   };
 
