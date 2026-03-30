@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useContext, useState} from "react";
+import {useEffect, useState} from "react";
 import Header from "@/components/Header";
 import Link from "next/link";
 import {
@@ -11,7 +11,7 @@ import {
   FiTrendingDown,
   FiTrendingUp,
 } from "react-icons/fi";
-import {AuthContext} from "@/context/AuthContext";
+import {useAuth} from "@/context/AuthContext";
 import {db} from "@/lib/firebase";
 import {doc, getDoc} from "firebase/firestore";
 import {obterGrupoMuscularExibicao} from "@/utils/gruposMusculares";
@@ -270,7 +270,7 @@ const CardMetrica = ({
 );
 
 const Home = () => {
-  const {user} = useContext(AuthContext);
+  const {user} = useAuth();
   const [carregandoPainel, setCarregandoPainel] = useState(true);
   const [dadosPainel, setDadosPainel] = useState({
     ultimaAvaliacao: null,

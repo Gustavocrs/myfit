@@ -17,7 +17,7 @@ import {
   FiEye,
   FiEdit2,
 } from "react-icons/fi";
-import {AuthContext} from "@/context/AuthContext";
+import {useAuth} from "@/context/AuthContext";
 import {ThemeContext} from "@/context/ThemeContext";
 import exercisesData from "@/data/exercises.json";
 import {
@@ -166,7 +166,7 @@ const SettingsPage = () => {
     areaCounts: {},
     daysOfWeek: [],
   });
-  const {logout, user} = useContext(AuthContext);
+  const {logout, user} = useAuth();
   const [savedWorkouts, setSavedWorkouts] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [pendingDays, setPendingDays] = useState([]); // Guarda os dias durante a criação

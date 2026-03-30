@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useEffect, useContext} from "react";
+import {useState, useEffect} from "react";
 import Header from "@/components/Header";
 import {ConfirmDialog} from "@/components/ConfirmDialog";
 import {
@@ -16,7 +16,7 @@ import {Input} from "@/components/Input";
 import {Button} from "@/components/Button";
 import {notifySuccess, notifyError, notifyWarn} from "@/components/Notify";
 import {useConfirmDialog} from "@/hooks/useConfirmDialog";
-import {AuthContext} from "@/context/AuthContext";
+import {useAuth} from "@/context/AuthContext";
 import {db} from "@/lib/firebase";
 import {doc, getDoc, setDoc} from "firebase/firestore";
 
@@ -25,7 +25,7 @@ const TrackingPage = () => {
   const [evaluations, setEvaluations] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentEval, setCurrentEval] = useState(null);
-  const {user} = useContext(AuthContext);
+  const {user} = useAuth();
   const confirmDialog = useConfirmDialog();
 
   useEffect(() => {

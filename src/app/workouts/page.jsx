@@ -1,11 +1,11 @@
 "use client";
 
-import {useState, useEffect, useContext} from "react";
+import {useState, useEffect} from "react";
 import Header from "@/components/Header";
 import DayDivider from "@/components/DayDivider";
 import ExerciseCard from "@/components/ExerciseCard";
 import Loading from "@/components/Loading";
-import {AuthContext} from "@/context/AuthContext";
+import {useAuth} from "@/context/AuthContext";
 import {notifyError, notifySuccess} from "@/components/Notify";
 import {db} from "@/lib/firebase";
 import {obterGrupoMuscularExibicao} from "@/utils/gruposMusculares";
@@ -17,7 +17,7 @@ const WorkoutsPage = () => {
   const [loading, setLoading] = useState(true);
   const [activeWorkoutId, setActiveWorkoutId] = useState(null);
   const [showTodayWorkoutOnly, setShowTodayWorkoutOnly] = useState(false);
-  const {user} = useContext(AuthContext);
+  const {user} = useAuth();
 
   // Simula o carregamento dos dados do treino ao montar o componente.
   useEffect(() => {

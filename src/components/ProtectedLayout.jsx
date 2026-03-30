@@ -13,7 +13,7 @@ const ProtectedLayout = ({children}) => {
 
   useEffect(() => {
     if (!loading && !user && pathname !== "/login") {
-      router.push("/login");
+      router.replace("/login");
     }
   }, [user, loading, router, pathname]);
 
