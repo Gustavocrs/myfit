@@ -1,9 +1,9 @@
 # Etapa 1: Build
-FROM node:20 AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copiar package files
+# Copiar arquivos de dependências
 COPY package*.json ./
 
 # Declarar argumentos de build para as chaves do Firebase
