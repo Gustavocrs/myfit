@@ -1,7 +1,7 @@
 [
   {
     "id": "supino_reto_barra",
-    "name": "1. Supino Reto (Barra)",
+    "name": "Supino Reto (Barra)",
     "defaultMeta": "4 x 8-10",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 120s",
@@ -11,7 +11,7 @@
   },
   {
     "id": "supino_inclinado_halter",
-    "name": "2. Supino Inclinado (Halter)",
+    "name": "Supino Inclinado (Halter)",
     "defaultMeta": "4 x 10",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 90 a 120s",
@@ -21,7 +21,7 @@
   },
   {
     "id": "peck_deck_voador",
-    "name": "3. Peck Deck (Voador)",
+    "name": "Peck Deck (Voador)",
     "defaultMeta": "3 x 12-15",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 60s",
@@ -31,7 +31,7 @@
   },
   {
     "id": "cross_over_polia_alta",
-    "name": "4. Cross-over (Polia Alta)",
+    "name": "Cross-over (Polia Alta)",
     "defaultMeta": "3 x 12-15",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 60 a 90s",
@@ -41,7 +41,7 @@
   },
   {
     "id": "cross_over_polia_baixa",
-    "name": "5. Cross-over (Polia Baixa)",
+    "name": "Cross-over (Polia Baixa)",
     "defaultMeta": "3 x 12-15",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 60 a 90s",
@@ -51,7 +51,7 @@
   },
   {
     "id": "supino_declinado_barra",
-    "name": "6. Supino Declinado",
+    "name": "Supino Declinado",
     "defaultMeta": "4 x 10",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 120s",
@@ -61,7 +61,7 @@
   },
   {
     "id": "supino_maquina_articulada",
-    "name": "7. Supino Máquina",
+    "name": "Supino Máquina",
     "defaultMeta": "4 x 10-12",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 90s",
@@ -71,7 +71,7 @@
   },
   {
     "id": "pullover_halter",
-    "name": "8. Pullover (Halter)",
+    "name": "Pullover (Halter)",
     "defaultMeta": "3 x 12",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 90s",
@@ -81,7 +81,7 @@
   },
   {
     "id": "crucifixo_reto_halter",
-    "name": "9. Crucifixo Reto (Halter)",
+    "name": "Crucifixo Reto (Halter)",
     "defaultMeta": "3 x 12-15",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 60s",
@@ -91,7 +91,7 @@
   },
   {
     "id": "flexao_de_bracos",
-    "name": "10. Flexão de Braços",
+    "name": "Flexão de Braços",
     "defaultMeta": "3 x Máx",
     "muscleGroup": "Peito",
     "restTime": "⏱️ 60s",
@@ -101,7 +101,7 @@
   },
   {
     "id": "puxada_alta_pulley",
-    "name": "1. Puxada Alta (Pulley)",
+    "name": "Puxada Alta (Pulley)",
     "defaultMeta": "4 x 10-12",
     "muscleGroup": "Costas",
     "restTime": "⏱️ 90 a 120s",
@@ -111,7 +111,7 @@
   },
   {
     "id": "remada_baixa_triangulo",
-    "name": "2. Remada Baixa (Triângulo)",
+    "name": "Remada Baixa (Triângulo)",
     "defaultMeta": "3 x 12",
     "muscleGroup": "Costas",
     "restTime": "⏱️ 90s",
@@ -121,7 +121,7 @@
   },
   {
     "id": "levantamento_terra",
-    "name": "3. Levantamento Terra",
+    "name": "Levantamento Terra",
     "defaultMeta": "4 x 5-8",
     "muscleGroup": "Costas",
     "restTime": "⏱️ 180s",
@@ -131,7 +131,7 @@
   },
   {
     "id": "remada_curvada_barra",
-    "name": "4. Remada Curvada (Barra)",
+    "name": "Remada Curvada (Barra)",
     "defaultMeta": "4 x 8-10",
     "muscleGroup": "Costas",
     "restTime": "⏱️ 120s",
@@ -141,7 +141,7 @@
   },
   {
     "id": "barra_fixa_pronada",
-    "name": "5. Barra Fixa (Pronada)",
+    "name": "Barra Fixa (Pronada)",
     "defaultMeta": "3 x Máx",
     "muscleGroup": "Costas",
     "restTime": "⏱️ 120s",
@@ -151,7 +151,7 @@
   },
   {
     "id": "remada_cavalinho",
-    "name": "6. Remada Cavalinho",
+    "name": "Remada Cavalinho",
     "defaultMeta": "3 x 10-12",
     "muscleGroup": "Costas",
     "restTime": "⏱️ 90s",
@@ -161,7 +161,7 @@
   },
   {
     "id": "remada_serrote_unilateral",
-    "name": "7. Remada Serrote (Halter)",
+    "name": "Remada Serrote (Halter)",
     "defaultMeta": "4 x 10-12",
     "muscleGroup": "Costas",
     "restTime": "⏱️ 60s",
@@ -171,7 +171,7 @@
   },
   {
     "id": "puxada_supinada",
-    "name": "8. Puxada Alta Supinada",
+    "name": "Puxada Alta Supinada",
     "defaultMeta": "3 x 10-12",
     "muscleGroup": "Costas",
     "restTime": "⏱️ 90s",
@@ -181,7 +181,7 @@
   },
   {
     "id": "pulldown_corda",
-    "name": "9. Pulldown (Corda)",
+    "name": "Pulldown (Corda)",
     "defaultMeta": "3 x 15",
     "muscleGroup": "Costas",
     "restTime": "⏱️ 60s",
@@ -191,7 +191,7 @@
   },
   {
     "id": "remada_maquina",
-    "name": "10. Remada Máquina Articulada",
+    "name": "Remada Máquina Articulada",
     "defaultMeta": "3 x 12",
     "muscleGroup": "Costas",
     "restTime": "⏱️ 90s",
@@ -201,7 +201,7 @@
   },
   {
     "id": "elevacao_lateral_sentado",
-    "name": "1. Elevação Lateral (Sentado)",
+    "name": "Elevação Lateral (Sentado)",
     "defaultMeta": "4 x 12-15",
     "muscleGroup": "Ombro",
     "restTime": "⏱️ 60s",
@@ -211,7 +211,7 @@
   },
   {
     "id": "desenv_arnold_sentado",
-    "name": "2. Desenv. Arnold (Sentado)",
+    "name": "Desenv. Arnold (Sentado)",
     "defaultMeta": "3 x 10",
     "muscleGroup": "Ombro",
     "restTime": "⏱️ 90s",
@@ -221,7 +221,7 @@
   },
   {
     "id": "crucifixo_inverso_maq",
-    "name": "3. Crucifixo Inverso (Máquina)",
+    "name": "Crucifixo Inverso (Máquina)",
     "defaultMeta": "3 x 12-15",
     "muscleGroup": "Ombro",
     "restTime": "⏱️ 60s",
@@ -231,7 +231,7 @@
   },
   {
     "id": "elevacao_lateral_cabo",
-    "name": "4. Elev. Lateral (Cabo Uni)",
+    "name": "Elev. Lateral (Cabo Uni)",
     "defaultMeta": "3 x 15",
     "muscleGroup": "Ombro",
     "restTime": "⏱️ 60s",
@@ -241,7 +241,7 @@
   },
   {
     "id": "encolhimento_halteres",
-    "name": "5. Encolhimento de Ombros",
+    "name": "Encolhimento de Ombros",
     "defaultMeta": "4 x 15",
     "muscleGroup": "Ombro",
     "restTime": "⏱️ 60s",
@@ -251,7 +251,7 @@
   },
   {
     "id": "desenv_barra_frente",
-    "name": "6. Desenv. Frontal (Barra)",
+    "name": "Desenv. Frontal (Barra)",
     "defaultMeta": "4 x 8-10",
     "muscleGroup": "Ombro",
     "restTime": "⏱️ 120s",
@@ -261,7 +261,7 @@
   },
   {
     "id": "elevacao_frontal_halter",
-    "name": "7. Elevação Frontal (Halter)",
+    "name": "Elevação Frontal (Halter)",
     "defaultMeta": "3 x 12",
     "muscleGroup": "Ombro",
     "restTime": "⏱️ 60s",
@@ -271,7 +271,7 @@
   },
   {
     "id": "face_pull_corda",
-    "name": "8. Face Pull (Polia)",
+    "name": "Face Pull (Polia)",
     "defaultMeta": "3 x 15",
     "muscleGroup": "Ombro",
     "restTime": "⏱️ 60s",
@@ -281,7 +281,7 @@
   },
   {
     "id": "remada_alta_polia",
-    "name": "9. Remada Alta (Polia)",
+    "name": "Remada Alta (Polia)",
     "defaultMeta": "3 x 12",
     "muscleGroup": "Ombro",
     "restTime": "⏱️ 60s",
@@ -291,7 +291,7 @@
   },
   {
     "id": "crucifixo_inverso_halter",
-    "name": "10. Crucifixo Inverso (Halter)",
+    "name": "Crucifixo Inverso (Halter)",
     "defaultMeta": "3 x 15",
     "muscleGroup": "Ombro",
     "restTime": "⏱️ 60s",
@@ -301,7 +301,7 @@
   },
   {
     "id": "rosca_scott_triceps_corda",
-    "name": "1. Bi-Set: Rosca Scott + Tríceps Corda",
+    "name": "Bi-Set: Rosca Scott + Tríceps Corda",
     "defaultMeta": "4 x 10-12",
     "muscleGroup": "Bíceps",
     "restTime": "⏱️ 90s",
@@ -311,7 +311,7 @@
   },
   {
     "id": "rosca_direta_barra",
-    "name": "2. Rosca Direta (Barra)",
+    "name": "Rosca Direta (Barra)",
     "defaultMeta": "4 x 8-10",
     "muscleGroup": "Bíceps",
     "restTime": "⏱️ 90s",
@@ -321,7 +321,7 @@
   },
   {
     "id": "rosca_martelo_halter",
-    "name": "3. Rosca Martelo (Halter)",
+    "name": "Rosca Martelo (Halter)",
     "defaultMeta": "3 x 12",
     "muscleGroup": "Bíceps",
     "restTime": "⏱️ 60s",
@@ -331,7 +331,7 @@
   },
   {
     "id": "rosca_concentrada",
-    "name": "4. Rosca Concentrada",
+    "name": "Rosca Concentrada",
     "defaultMeta": "3 x 10-12",
     "muscleGroup": "Bíceps",
     "restTime": "⏱️ 60s",
@@ -341,7 +341,7 @@
   },
   {
     "id": "rosca_45_graus",
-    "name": "5. Rosca no Banco 45º",
+    "name": "Rosca no Banco 45º",
     "defaultMeta": "3 x 10-12",
     "muscleGroup": "Bíceps",
     "restTime": "⏱️ 90s",
@@ -351,7 +351,7 @@
   },
   {
     "id": "rosca_inversa_barra",
-    "name": "6. Rosca Inversa (Barra W)",
+    "name": "Rosca Inversa (Barra W)",
     "defaultMeta": "3 x 12-15",
     "muscleGroup": "Bíceps",
     "restTime": "⏱️ 60s",
@@ -361,7 +361,7 @@
   },
   {
     "id": "rosca_polia_baixa",
-    "name": "7. Rosca Direta (Polia Baixa)",
+    "name": "Rosca Direta (Polia Baixa)",
     "defaultMeta": "3 x 15",
     "muscleGroup": "Bíceps",
     "restTime": "⏱️ 60s",
@@ -371,7 +371,7 @@
   },
   {
     "id": "rosca_spider",
-    "name": "8. Rosca Spider",
+    "name": "Rosca Spider",
     "defaultMeta": "3 x 10-12",
     "muscleGroup": "Bíceps",
     "restTime": "⏱️ 60s",
@@ -381,7 +381,7 @@
   },
   {
     "id": "rosca_alternada",
-    "name": "9. Rosca Alternada (Halter)",
+    "name": "Rosca Alternada (Halter)",
     "defaultMeta": "3 x 12",
     "muscleGroup": "Bíceps",
     "restTime": "⏱️ 60s",
@@ -391,7 +391,7 @@
   },
   {
     "id": "rosca_cruzada_polia",
-    "name": "10. Rosca Cruzada (Polia Alta)",
+    "name": "Rosca Cruzada (Polia Alta)",
     "defaultMeta": "3 x 15",
     "muscleGroup": "Bíceps",
     "restTime": "⏱️ 60s",
@@ -401,7 +401,7 @@
   },
   {
     "id": "triceps_corda_polia",
-    "name": "1. Tríceps Corda (Polia)",
+    "name": "Tríceps Corda (Polia)",
     "defaultMeta": "4 x 12",
     "muscleGroup": "Tríceps",
     "restTime": "⏱️ 60s",
@@ -411,7 +411,7 @@
   },
   {
     "id": "triceps_frances_polia",
-    "name": "2. Tríceps Francês (Polia/Corda)",
+    "name": "Tríceps Francês (Polia/Corda)",
     "defaultMeta": "3 x 10-12",
     "muscleGroup": "Tríceps",
     "restTime": "⏱️ 90s",
@@ -421,7 +421,7 @@
   },
   {
     "id": "triceps_testa_w",
-    "name": "3. Tríceps Testa (Barra W)",
+    "name": "Tríceps Testa (Barra W)",
     "defaultMeta": "4 x 10",
     "muscleGroup": "Tríceps",
     "restTime": "⏱️ 90s",
@@ -431,7 +431,7 @@
   },
   {
     "id": "triceps_pulley_reta",
-    "name": "4. Tríceps Pulley (Barra Reta)",
+    "name": "Tríceps Pulley (Barra Reta)",
     "defaultMeta": "3 x 12",
     "muscleGroup": "Tríceps",
     "restTime": "⏱️ 60s",
@@ -441,7 +441,7 @@
   },
   {
     "id": "triceps_coice_halter",
-    "name": "5. Tríceps Coice (Halter)",
+    "name": "Tríceps Coice (Halter)",
     "defaultMeta": "3 x 12-15",
     "muscleGroup": "Tríceps",
     "restTime": "⏱️ 60s",
@@ -451,7 +451,7 @@
   },
   {
     "id": "triceps_supinado",
-    "name": "6. Supino Fechado (Supinado)",
+    "name": "Supino Fechado (Supinado)",
     "defaultMeta": "4 x 8-10",
     "muscleGroup": "Tríceps",
     "restTime": "⏱️ 120s",
@@ -461,7 +461,7 @@
   },
   {
     "id": "mergulho_paralelas",
-    "name": "7. Mergulho nas Paralelas",
+    "name": "Mergulho nas Paralelas",
     "defaultMeta": "3 x Máx",
     "muscleGroup": "Tríceps",
     "restTime": "⏱️ 90s",
@@ -471,7 +471,7 @@
   },
   {
     "id": "triceps_maquina",
-    "name": "8. Tríceps Máquina",
+    "name": "Tríceps Máquina",
     "defaultMeta": "3 x 10-12",
     "muscleGroup": "Tríceps",
     "restTime": "⏱️ 60s",
@@ -481,7 +481,7 @@
   },
   {
     "id": "triceps_banco",
-    "name": "9. Mergulho no Banco",
+    "name": "Mergulho no Banco",
     "defaultMeta": "3 x 15",
     "muscleGroup": "Tríceps",
     "restTime": "⏱️ 60s",
@@ -491,7 +491,7 @@
   },
   {
     "id": "triceps_unilateral_cabo",
-    "name": "10. Tríceps Unilateral Inverso",
+    "name": "Tríceps Unilateral Inverso",
     "defaultMeta": "3 x 12",
     "muscleGroup": "Tríceps",
     "restTime": "⏱️ 60s",
@@ -501,7 +501,7 @@
   },
   {
     "id": "agachamento_livre_barra",
-    "name": "1. Agachamento Livre",
+    "name": "Agachamento Livre",
     "defaultMeta": "4 x 8-10",
     "muscleGroup": "Pernas",
     "restTime": "⏱️ 120 a 150s",
@@ -511,7 +511,7 @@
   },
   {
     "id": "leg_press_45",
-    "name": "2. Leg Press 45º",
+    "name": "Leg Press 45º",
     "defaultMeta": "4 x 10-12",
     "muscleGroup": "Pernas",
     "restTime": "⏱️ 120s",
@@ -521,7 +521,7 @@
   },
   {
     "id": "cadeira_extensora",
-    "name": "3. Cadeira Extensora",
+    "name": "Cadeira Extensora",
     "defaultMeta": "4 x 12-15",
     "muscleGroup": "Pernas",
     "restTime": "⏱️ 90s",
@@ -531,7 +531,7 @@
   },
   {
     "id": "cadeira_flexora",
-    "name": "4. Cadeira Flexora",
+    "name": "Cadeira Flexora",
     "defaultMeta": "3 x 12-15",
     "muscleGroup": "Pernas",
     "restTime": "⏱️ 90s",
@@ -541,7 +541,7 @@
   },
   {
     "id": "mesa_flexora",
-    "name": "5. Mesa Flexora",
+    "name": "Mesa Flexora",
     "defaultMeta": "3 x 12",
     "muscleGroup": "Pernas",
     "restTime": "⏱️ 90s",
@@ -551,7 +551,7 @@
   },
   {
     "id": "stiff_barra",
-    "name": "6. Stiff (Barra/Halter)",
+    "name": "Stiff (Barra/Halter)",
     "defaultMeta": "4 x 10",
     "muscleGroup": "Pernas",
     "restTime": "⏱️ 120s",
@@ -561,7 +561,7 @@
   },
   {
     "id": "agachamento_bulgaro",
-    "name": "7. Agachamento Búlgaro",
+    "name": "Agachamento Búlgaro",
     "defaultMeta": "3 x 10-12",
     "muscleGroup": "Pernas",
     "restTime": "⏱️ 90s",
@@ -571,7 +571,7 @@
   },
   {
     "id": "cadeira_abdutora",
-    "name": "8. Cadeira Abdutora",
+    "name": "Cadeira Abdutora",
     "defaultMeta": "3 x 15-20",
     "muscleGroup": "Pernas",
     "restTime": "⏱️ 90s",
@@ -581,7 +581,7 @@
   },
   {
     "id": "elevacao_pelvica_maq",
-    "name": "9. Elevação Pélvica",
+    "name": "Elevação Pélvica",
     "defaultMeta": "4 x 10-12",
     "muscleGroup": "Pernas",
     "restTime": "⏱️ 120s",
@@ -591,7 +591,7 @@
   },
   {
     "id": "passada_avanco_halter",
-    "name": "10. Passada/Avanço",
+    "name": "Passada/Avanço",
     "defaultMeta": "3 x 12 passos",
     "muscleGroup": "Pernas",
     "restTime": "⏱️ 120s",
@@ -601,7 +601,7 @@
   },
   {
     "id": "gemeos_sentado_maquina",
-    "name": "1. Gêmeos Sentado (Máquina)",
+    "name": "Gêmeos Sentado (Máquina)",
     "defaultMeta": "4 x 15-20",
     "muscleGroup": "Panturrilha",
     "restTime": "⏱️ 60s",
@@ -611,7 +611,7 @@
   },
   {
     "id": "gemeos_em_pe_smith",
-    "name": "2. Gêmeos em Pé (Smith)",
+    "name": "Gêmeos em Pé (Smith)",
     "defaultMeta": "4 x 12-15",
     "muscleGroup": "Panturrilha",
     "restTime": "⏱️ 60 a 90s",
@@ -621,7 +621,7 @@
   },
   {
     "id": "gemeos_leg_press",
-    "name": "3. Gêmeos no Leg Press",
+    "name": "Gêmeos no Leg Press",
     "defaultMeta": "3 x 15",
     "muscleGroup": "Panturrilha",
     "restTime": "⏱️ 60s",
@@ -631,7 +631,7 @@
   },
   {
     "id": "gemeos_unilateral_halter",
-    "name": "4. Gêmeos Unilateral",
+    "name": "Gêmeos Unilateral",
     "defaultMeta": "3 x 15",
     "muscleGroup": "Panturrilha",
     "restTime": "⏱️ 60s",
@@ -641,7 +641,7 @@
   },
   {
     "id": "crunch_polia_alta",
-    "name": "5. Crunch na Polia Alta",
+    "name": "Crunch na Polia Alta",
     "defaultMeta": "4 x 15",
     "muscleGroup": "Abdômen",
     "restTime": "⏱️ 60s",
@@ -651,7 +651,7 @@
   },
   {
     "id": "prancha_isometrica",
-    "name": "6. Prancha Isométrica",
+    "name": "Prancha Isométrica",
     "defaultMeta": "3 x Máx",
     "muscleGroup": "Abdômen",
     "restTime": "⏱️ 60s",
@@ -661,7 +661,7 @@
   },
   {
     "id": "abdominal_infra_paralelas",
-    "name": "7. Elevação de Pernas (Sup.)",
+    "name": "Elevação de Pernas (Sup.)",
     "defaultMeta": "3 x 15",
     "muscleGroup": "Abdômen",
     "restTime": "⏱️ 60s",
@@ -671,7 +671,7 @@
   },
   {
     "id": "roda_abdominal",
-    "name": "8. Roda Abdominal",
+    "name": "Roda Abdominal",
     "defaultMeta": "3 x 10",
     "muscleGroup": "Abdômen",
     "restTime": "⏱️ 90s",
@@ -681,7 +681,7 @@
   },
   {
     "id": "abdominal_supra_banco",
-    "name": "9. Crunch Supra (Banco)",
+    "name": "Crunch Supra (Banco)",
     "defaultMeta": "3 x 20",
     "muscleGroup": "Abdômen",
     "restTime": "⏱️ 60s",
@@ -691,7 +691,7 @@
   },
   {
     "id": "russian_twist",
-    "name": "10. Russian Twist",
+    "name": "Russian Twist",
     "defaultMeta": "3 x 20",
     "muscleGroup": "Abdômen",
     "restTime": "⏱️ 60s",
