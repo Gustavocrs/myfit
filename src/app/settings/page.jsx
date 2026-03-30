@@ -386,12 +386,15 @@ const SettingsPage = () => {
   // Aggregate data for weekly summary
   const weeklySummary = pendingDays.reduce(
     (acc, day) => {
-      day.areas.forEach((area) => acc.areas.add(area));
-      Object.assign(acc.selectedExercises, day.selectedExercises);
-      Object.assign(acc.areaCounts, day.areaCounts);
+      day.areas.forEach((area) => {
+        acc.areas.add(area);
+        const count =
+          day.selectedExercises?.[area]?.length || day.areaCounts?.[area] || 0;
+        acc.totalCounts[area] = (acc.totalCounts[area] || 0) + count;
+      });
       return acc;
     },
-    {areas: new Set(), selectedExercises: {}, areaCounts: {}},
+    {areas: new Set(), totalCounts: {}},
   );
 
   return (
@@ -680,10 +683,7 @@ const SettingsPage = () => {
                           <div className="bg-slate-50 p-4 rounded-md border border-slate-200">
                             <MuscleGroupsSummary
                               areas={Array.from(weeklySummary.areas)}
-                              selectedExercises={
-                                weeklySummary.selectedExercises
-                              }
-                              areaCounts={weeklySummary.areaCounts}
+                              totalCounts={weeklySummary.totalCounts}
                             />
                           </div>
                         </div>

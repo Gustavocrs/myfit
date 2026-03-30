@@ -3,10 +3,16 @@
  *
  * @param {Object} props
  * @param {Array<string>} props.areas - Lista de grupos musculares selecionados
- * @param {Object} props.selectedExercises - Exercícios selecionados por área {area: [id1, id2, ...]}
- * @param {Object} props.areaCounts - Contagem de exercícios por área {area: count}
+ * @param {Object} [props.selectedExercises] - Opcional. Exercícios selecionados por área {area: [id1, id2, ...]}
+ * @param {Object} [props.areaCounts] - Opcional. Contagem de exercícios por área {area: count}
+ * @param {Object} [props.totalCounts] - Opcional. Contagem total de exercícios por área, para modo de resumo {area: count}
  */
-const MuscleGroupsSummary = ({areas, selectedExercises, areaCounts}) => {
+const MuscleGroupsSummary = ({
+  areas,
+  selectedExercises,
+  areaCounts,
+  totalCounts,
+}) => {
   const colorMap = {
     Peito: "bg-red-100 text-red-700 border-red-300",
     Costas: "bg-blue-100 text-blue-700 border-blue-300",
@@ -24,7 +30,8 @@ const MuscleGroupsSummary = ({areas, selectedExercises, areaCounts}) => {
         {areas && areas.length > 0 ? (
           areas.map((area) => {
             const count =
-              selectedExercises?.[area]?.length || areaCounts?.[area] || 0;
+              totalCounts?.[area] ??
+              (selectedExercises?.[area]?.length || areaCounts?.[area] || 0);
             const colors =
               colorMap[area] || "bg-slate-100 text-slate-700 border-slate-300";
 
