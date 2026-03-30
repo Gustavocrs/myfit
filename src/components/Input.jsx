@@ -58,11 +58,11 @@ export const Input = ({
 
   const baseInputClasses = `
     block w-full h-14 px-4 py-2 font-sans
-    border border-slate-300 rounded-lg
-    bg-white text-slate-900
+    border border-slate-300 dark:border-slate-600 rounded-lg
+    bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100
     transition-colors duration-200 ease-in-out
     focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500
-    disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed
+    disabled:bg-slate-100 dark:disabled:bg-slate-900 disabled:text-slate-500 dark:disabled:text-slate-500 disabled:cursor-not-allowed
   `;
 
   const inputType = type === "password" && passwordVisible ? "text" : type;
@@ -185,13 +185,13 @@ export const Input = ({
                   );
                 })
               ) : (
-                <span className="text-slate-400">
+                <span className="text-slate-400 dark:text-slate-500">
                   {placeholder || "Selecione..."}
                 </span>
               )}
               <div className="ml-auto">
                 <FiChevronDown
-                  className={`text-slate-500 transition-transform ${
+                  className={`text-slate-500 dark:text-slate-400 transition-transform ${
                     dropdownOpen ? "rotate-180" : ""
                   }`}
                 />
@@ -199,7 +199,7 @@ export const Input = ({
             </div>
 
             {dropdownOpen && !disabled && (
-              <div className="absolute z-50 w-full mt-1 bg-white border border-slate-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                 {sortedData
                   .filter((item) => {
                     const val = getPrimitiveValue(item);
@@ -217,7 +217,7 @@ export const Input = ({
                     return (
                       <div
                         key={String(val)}
-                        className="px-4 py-2 cursor-pointer hover:bg-sky-50 flex items-center gap-2 text-slate-700"
+                        className="px-4 py-2 cursor-pointer hover:bg-sky-50 dark:hover:bg-slate-700 flex items-center gap-2 text-slate-700 dark:text-slate-200"
                         onClick={() => handleMultiSelect(val)}
                       >
                         <input className="cursor-pointer" type="checkbox" />
@@ -231,7 +231,7 @@ export const Input = ({
                     (sv) => String(getPrimitiveValue(sv)) === String(val),
                   );
                 }).length === 0 && (
-                  <div className="px-4 py-2 text-sm text-slate-500">
+                  <div className="px-4 py-2 text-sm text-slate-500 dark:text-slate-400">
                     Nenhuma opção disponível
                   </div>
                 )}
@@ -351,13 +351,13 @@ export const Input = ({
                     maxWidth: "27rem",
                     alignItems: "flex-start",
                     overflow: "hidden",
-                    backgroundColor: "white",
+                    backgroundColor: "var(--mui-input-bg, white)",
                     borderRadius: "0.5rem",
                     "& fieldset": {
-                      borderColor: "#cbd5e1",
+                      borderColor: "var(--mui-input-border, #cbd5e1)",
                     },
                     "&:hover fieldset": {
-                      borderColor: "#cbd5e1",
+                      borderColor: "var(--mui-input-border, #cbd5e1)",
                     },
                     "&.Mui-focused fieldset": {
                       borderColor: "#0ea5e9",
@@ -365,9 +365,11 @@ export const Input = ({
                     },
                   },
                   "& .MuiInputBase-input": {
-                    color: "#0f172a",
+                    color: "var(--mui-input-color, #0f172a)",
                     "&::placeholder": {
                       fontSize: "0.875rem",
+                      color: "var(--mui-input-placeholder, #64748b)",
+                      opacity: 1,
                     },
                   },
                 }}
@@ -423,7 +425,7 @@ export const Input = ({
         );
       default:
         return (
-          <div children="w-full bg-red-500">
+          <div className="w-full">
             <input
               type={inputType}
               className={`${baseInputClasses} ${className}`}
@@ -444,7 +446,7 @@ export const Input = ({
       {label && (
         <label
           htmlFor={name}
-          className="block mb-2 text-sm font-semibold text-slate-700"
+          className="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300"
         >
           {label}
           {required && <span className="text-red-600"> *</span>}
@@ -456,7 +458,7 @@ export const Input = ({
           <button
             type="button"
             onClick={() => setPasswordVisible(!passwordVisible)}
-            className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-500 transition-colors hover:text-sky-600"
+            className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-500 dark:text-slate-400 transition-colors hover:text-sky-600"
           >
             {passwordVisible ? <FiEyeOff size={20} /> : <FiEye size={20} />}
           </button>

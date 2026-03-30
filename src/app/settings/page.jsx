@@ -6,7 +6,7 @@ import {Switch} from "@/components/Switch";
 import {Button} from "@/components/Button";
 import {Input} from "@/components/Input";
 import MuscleGroupsSummary from "@/components/MuscleGroupsSummary";
-import AlertDialog from "@/components/AlertDialog";
+import {ConfirmDialog} from "@/components/ConfirmDialog";
 import {notifySuccess, notifyError} from "@/components/Notify";
 import {useConfirmDialog} from "@/hooks/useConfirmDialog";
 import {
@@ -35,8 +35,7 @@ const MUSCLE_GROUPS = [
 ];
 
 const SettingsPage = () => {
-  const {isDarkMode, toggleDarkMode, syncWithFirebase} =
-    useContext(ThemeContext);
+  const {isDarkMode, toggleDarkMode} = useContext(ThemeContext);
   const [showTodayWorkoutOnly, setShowTodayWorkoutOnly] = useState(false);
   const [showWorkoutForm, setShowWorkoutForm] = useState(false);
   const [workoutConfig, setWorkoutConfig] = useState({
@@ -56,9 +55,6 @@ const SettingsPage = () => {
     const fetchSavedWorkoutsAndSettings = async () => {
       if (user?.uid) {
         try {
-          // Sincroniza o tema com Firebase
-          await syncWithFirebase(user);
-
           const docRef = doc(db, "workoutPlans", user.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists() && docSnap.data().plans) {
@@ -80,7 +76,7 @@ const SettingsPage = () => {
       }
     };
     fetchSavedWorkoutsAndSettings();
-  }, [user, syncWithFirebase]);
+  }, [user]);
 
   const handleShowTodayWorkoutOnlyToggle = async () => {
     const newValue = !showTodayWorkoutOnly;
@@ -375,18 +371,24 @@ const SettingsPage = () => {
   };
 
   const handleDeleteWorkout = async (index) => {
-    confirmDialog.openAlert(async () => {
-      const updated = savedWorkouts.filter((_, i) => i !== index);
-      setSavedWorkouts(updated);
-      if (user?.uid) {
-        try {
-          await setDoc(doc(db, "workoutPlans", user.uid), {plans: updated});
-          notifySuccess("Treino excluído com sucesso!");
-        } catch (error) {
-          console.error("Erro ao excluir no Firebase:", error);
-          notifyError("Erro ao excluir o treino.");
+    confirmDialog.openDialog({
+      title: "Excluir treino?",
+      message:
+        "Essa ação remove o treino salvo permanentemente. Deseja continuar?",
+      onConfirm: async () => {
+        const updated = savedWorkouts.filter((_, i) => i !== index);
+        setSavedWorkouts(updated);
+
+        if (user?.uid) {
+          try {
+            await setDoc(doc(db, "workoutPlans", user.uid), {plans: updated});
+            notifySuccess("Treino excluído com sucesso!");
+          } catch (error) {
+            console.error("Erro ao excluir no Firebase:", error);
+            notifyError("Erro ao excluir o treino.");
+          }
         }
-      }
+      },
     });
   };
 
@@ -405,34 +407,42 @@ const SettingsPage = () => {
   );
 
   return (
-    <main className="min-h-screen bg-slate-100 py-3 px-3">
-      <AlertDialog
-        state={confirmDialog.alertState}
-        setState={confirmDialog.closeAlert}
-        onEdit={confirmDialog.onEdit}
-      />
+    <main className="min-h-screen bg-slate-100 dark:bg-slate-900 py-3 px-3">
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={confirmDialog.closeDialog}
+        onConfirm={confirmDialog.handleConfirm}
+        title={confirmDialog.title}
+      >
+        {confirmDialog.message}
+      </ConfirmDialog>
       <div className="max-w-[600px] w-full mx-auto pb-6">
         <Header />
-        <h2 className="text-[1.1rem] font-extrabold text-slate-800 uppercase mb-4 mt-6">
+        <h2 className="text-[1.1rem] font-extrabold text-slate-800 dark:text-slate-200 uppercase mb-4 mt-6">
           Ajustes
         </h2>
 
         {/* Seção de Aparência */}
-        <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-4">
-          <h3 className="text-[0.8rem] font-bold text-slate-400 uppercase mb-3">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 mb-4">
+          <h3 className="text-[0.8rem] font-bold text-slate-400 dark:text-slate-500 uppercase mb-3">
             Aparência
           </h3>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <FiMoon size={20} className="text-slate-600" />
-              <span className="font-semibold text-slate-800">Tema Escuro</span>
+              <FiMoon
+                size={20}
+                className="text-slate-600 dark:text-slate-400"
+              />
+              <span className="font-semibold text-slate-800 dark:text-slate-200">
+                Tema Escuro
+              </span>
             </div>
             <Switch checked={isDarkMode} onChange={handleDarkModeToggle} />
           </div>
-          <div className="flex items-center justify-between mt-2 border-t border-slate-100 pt-3">
+          <div className="flex items-center justify-between mt-2 border-t border-slate-100 dark:border-slate-700 pt-3">
             <div className="flex items-center gap-3">
-              <FiEye size={20} className="text-slate-600" />
-              <span className="font-semibold text-slate-800">
+              <FiEye size={20} className="text-slate-600 dark:text-slate-400" />
+              <span className="font-semibold text-slate-800 dark:text-slate-200">
                 Ver treinos do dia
               </span>
             </div>
@@ -444,8 +454,8 @@ const SettingsPage = () => {
         </div>
 
         {/* Seção de Treinos */}
-        <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-4">
-          <h3 className="text-[0.8rem] font-bold text-slate-400 uppercase mb-3">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 mb-4">
+          <h3 className="text-[0.8rem] font-bold text-slate-400 dark:text-slate-500 uppercase mb-3">
             Treinos
           </h3>
 
@@ -461,36 +471,36 @@ const SettingsPage = () => {
               </Button>
 
               {savedWorkouts.length > 0 && (
-                <div className="flex flex-col gap-3 border-t border-slate-100 pt-3 mt-2">
-                  <h4 className="text-[0.75rem] font-bold text-slate-400 uppercase">
+                <div className="flex flex-col gap-3 border-t border-slate-100 dark:border-slate-700 pt-3 mt-2">
+                  <h4 className="text-[0.75rem] font-bold text-slate-400 dark:text-slate-500 uppercase">
                     Treinos Salvos
                   </h4>
                   {savedWorkouts.map((wk, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-200"
+                      className="flex items-center justify-between bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg border border-slate-200 dark:border-slate-700"
                     >
                       <div className="flex flex-col">
-                        <span className="font-bold text-slate-800 text-[0.95rem]">
+                        <span className="font-bold text-slate-800 dark:text-slate-200 text-[0.95rem]">
                           {wk.title}{" "}
                           <span className="text-orange-600 ml-1">
                             ({wk.id})
                           </span>
                         </span>
-                        <span className="text-[0.8rem] text-slate-500 font-medium">
+                        <span className="text-[0.8rem] text-slate-500 dark:text-slate-400 font-medium">
                           {wk.badge}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleEditWorkout(idx)}
-                          className="p-2 bg-white border border-slate-200 rounded-md text-slate-500 hover:text-orange-600 hover:border-orange-200 transition-colors"
+                          className="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md text-slate-500 dark:text-slate-400 hover:text-orange-600 hover:border-orange-200 transition-colors"
                         >
                           <FiEdit2 size={16} />
                         </button>
                         <button
                           onClick={() => handleDeleteWorkout(idx)}
-                          className="p-2 bg-white border border-slate-200 rounded-md text-slate-500 hover:text-red-600 hover:border-red-200 transition-colors"
+                          className="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-md text-slate-500 dark:text-slate-400 hover:text-red-600 hover:border-red-200 transition-colors"
                         >
                           <FiTrash2 size={16} />
                         </button>
@@ -501,7 +511,7 @@ const SettingsPage = () => {
               )}
             </>
           ) : (
-            <div className="flex flex-col gap-4 mt-2 border-t border-slate-100 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="flex flex-col gap-4 mt-2 border-t border-slate-100 dark:border-slate-700 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
               <div className="grid grid-cols-2 gap-4">
                 <Input
                   type="select"
@@ -536,7 +546,7 @@ const SettingsPage = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-[0.85rem] font-bold text-slate-700">
+                <label className="text-[0.85rem] font-bold text-slate-700 dark:text-slate-300">
                   Áreas Focadas
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -556,27 +566,27 @@ const SettingsPage = () => {
                           className={`px-3 py-1.5 text-[0.8rem] font-semibold rounded-full border transition-colors ${
                             isSelected
                               ? "bg-orange-600 text-white border-orange-600 shadow-sm"
-                              : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50"
+                              : "bg-white dark:bg-slate-700 dark:border-slate-600 text-slate-600 dark:text-slate-300 border-slate-300 hover:bg-slate-50 dark:hover:bg-slate-600"
                           }`}
                         >
                           {area}
                         </button>
                         {isSelected && !hasManualSelection && (
-                          <div className="flex items-center justify-center gap-2 bg-slate-100 border border-slate-200 rounded-full px-1 py-0.5">
+                          <div className="flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-full px-1 py-0.5">
                             <button
                               type="button"
                               onClick={() => handleAreaCountChange(area, -1)}
-                              className="w-6 h-6 flex items-center justify-center bg-slate-200 text-slate-700 rounded-full font-bold hover:bg-slate-300 transition-colors active:scale-90"
+                              className="w-6 h-6 flex items-center justify-center bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-full font-bold hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors active:scale-90"
                             >
                               -
                             </button>
-                            <span className="w-5 text-center text-slate-900 text-sm font-bold">
+                            <span className="w-5 text-center text-slate-900 dark:text-slate-100 text-sm font-bold">
                               {workoutConfig.areaCounts?.[area] || 3}
                             </span>
                             <button
                               type="button"
                               onClick={() => handleAreaCountChange(area, 1)}
-                              className="w-6 h-6 flex items-center justify-center bg-slate-200 text-slate-700 rounded-full font-bold hover:bg-slate-300 transition-colors active:scale-90"
+                              className="w-6 h-6 flex items-center justify-center bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-full font-bold hover:bg-slate-300 dark:hover:bg-slate-500 transition-colors active:scale-90"
                             >
                               +
                             </button>
@@ -661,13 +671,13 @@ const SettingsPage = () => {
                     variant="secondary"
                     wfull
                     onClick={handleAddPendingDay}
-                    className="!h-12 border-dashed border-2 border-slate-300"
+                    className="!h-12 border-dashed border-2 border-slate-300 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
                   >
                     + Adicionar
                   </Button>
 
                   {pendingDays.length > 0 && (
-                    <div className="flex flex-col gap-3 mt-2 border-t border-slate-100 pt-3">
+                    <div className="flex flex-col gap-3 mt-2 border-t border-slate-100 dark:border-slate-700 pt-3">
                       {/* Layout em duas colunas: Dias e Resumo de Grupos */}
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         {/* Coluna 1: Lista de Dias */}
@@ -679,17 +689,17 @@ const SettingsPage = () => {
                             {pendingDays.map((pd, i) => (
                               <div
                                 key={i}
-                                className="flex justify-between items-center bg-slate-50 p-3 rounded-md border border-slate-200"
+                                className="flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 p-3 rounded-md border border-slate-200 dark:border-slate-700"
                               >
                                 <div className="flex flex-col">
-                                  <span className="font-bold text-slate-700 text-[0.85rem]">
+                                  <span className="font-bold text-slate-700 dark:text-slate-300 text-[0.85rem]">
                                     {pd.name}
                                   </span>
                                 </div>
                                 <div className="flex items-center">
                                   <button
                                     onClick={() => handleEditPendingDay(i)}
-                                    className="p-2 text-slate-400 hover:text-orange-500 transition-colors"
+                                    className="p-2 text-slate-400 dark:text-slate-500 hover:text-orange-500 transition-colors"
                                   >
                                     <FiEdit2 size={16} />
                                   </button>
@@ -708,11 +718,11 @@ const SettingsPage = () => {
                         {/* Coluna 2: Resumo de Grupos Musculares */}
 
                         <div>
-                          <h4 className="text-[0.8rem] font-bold text-slate-500 uppercase mb-3">
+                          <h4 className="text-[0.8rem] font-bold text-slate-500 dark:text-slate-400 uppercase mb-3">
                             Grupos Musculares
                           </h4>
 
-                          <div className="bg-slate-50 p-4 rounded-md border border-slate-200">
+                          <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-md border border-slate-200 dark:border-slate-700">
                             <MuscleGroupsSummary
                               areas={Array.from(weeklySummary.areas)}
                               totalCounts={weeklySummary.totalCounts}
@@ -756,8 +766,8 @@ const SettingsPage = () => {
         </div>
 
         {/* Seção de Gerenciamento de Dados */}
-        <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-3">
-          <h3 className="text-[0.8rem] font-bold text-slate-400 uppercase mb-2">
+        <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col gap-3">
+          <h3 className="text-[0.8rem] font-bold text-slate-400 dark:text-slate-500 uppercase mb-2">
             Gerenciamento
           </h3>
           <Button

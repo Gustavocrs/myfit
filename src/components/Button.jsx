@@ -28,7 +28,8 @@ export const Button = ({
     `,
     secondary: `
       bg-slate-200 text-slate-800
-      hover:bg-slate-300 hover:shadow-lg
+      dark:bg-slate-700 dark:text-slate-100
+      hover:bg-slate-300 dark:hover:bg-slate-600 hover:shadow-lg
       focus:ring-slate-400
     `,
     error: `

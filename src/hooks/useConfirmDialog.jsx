@@ -3,38 +3,68 @@
 import {useState} from "react";
 
 /**
- * Hook para gerenciar diálogos de confirmação usando AlertDialog
- * Compatível com o componente AlertDialog existente no projeto
- * 
- * @returns {Object} { alertState, openAlert, closeAlert, onEdit }
+ * Hook para gerenciar diálogos de confirmação reutilizáveis.
+ *
+ * @returns {Object} Estado e ações do diálogo de confirmação
  */
 export const useConfirmDialog = () => {
-  const [alertState, setAlertState] = useState(false);
-  const [onEditCallback, setOnEditCallback] = useState(null);
+  const [dialogState, setDialogState] = useState({
+    isOpen: false,
+    title: "Confirmar ação",
+    message: "Tem certeza que deseja continuar?",
+    onConfirm: null,
+  });
 
   /**
-   * Abre o diálogo de confirmação
-   * @param {Function} onConfirm - Callback executado quando o usuário clica em "Editar"
+   * Abre o diálogo com título, mensagem e callback de confirmação.
+   *
+   * @param {Object} params
+   * @param {string} params.title
+   * @param {string} params.message
+   * @param {Function} params.onConfirm
    */
-  const openAlert = (onConfirm = () => {}) => {
-    setOnEditCallback(() => onConfirm);
-    setAlertState(true);
+  const openDialog = ({
+    title = "Confirmar ação",
+    message = "Tem certeza que deseja continuar?",
+    onConfirm = async () => {},
+  } = {}) => {
+    setDialogState({
+      isOpen: true,
+      title,
+      message,
+      onConfirm,
+    });
   };
 
-  const closeAlert = () => {
-    setAlertState(false);
+  const closeDialog = () => {
+    setDialogState((prev) => ({
+      ...prev,
+      isOpen: false,
+    }));
   };
 
-  // Mapeia para o padrão do AlertDialog (onEdit)
-  const onEdit = () => {
-    onEditCallback?.();
-    closeAlert();
+  const handleConfirm = async () => {
+    try {
+      await dialogState.onConfirm?.();
+    } finally {
+      closeDialog();
+    }
   };
 
   return {
-    alertState,
-    openAlert,
-    closeAlert,
-    onEdit,
+    isOpen: dialogState.isOpen,
+    title: dialogState.title,
+    message: dialogState.message,
+    openDialog,
+    closeDialog,
+    handleConfirm,
+    // Compatibilidade com a API anterior para evitar regressão em chamadas legadas.
+    alertState: dialogState.isOpen,
+    openAlert: (onConfirm = async () => {}) =>
+      openDialog({
+        onConfirm,
+      }),
+    closeAlert: closeDialog,
+    onEdit: handleConfirm,
   };
 };

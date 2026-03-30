@@ -8,7 +8,6 @@ import ExerciseCard from "@/components/ExerciseCard";
 import Loading from "@/components/Loading";
 import {AuthContext} from "@/context/AuthContext";
 import {notifyError, notifySuccess} from "@/components/Notify";
-import {ThemeContext} from "@/context/ThemeContext";
 import {db} from "@/lib/firebase";
 import {doc, getDoc, setDoc} from "firebase/firestore";
 import Link from "next/link";
@@ -19,7 +18,6 @@ const WorkoutsPage = () => {
   const [activeWorkoutId, setActiveWorkoutId] = useState(null);
   const [showTodayWorkoutOnly, setShowTodayWorkoutOnly] = useState(false);
   const {user} = useContext(AuthContext);
-  const {syncWithFirebase} = useContext(ThemeContext);
 
   // Simula o carregamento dos dados do treino ao montar o componente.
   useEffect(() => {
@@ -27,9 +25,6 @@ const WorkoutsPage = () => {
       setLoading(true);
       try {
         if (user?.uid) {
-          // Sincroniza o tema com Firebase
-          await syncWithFirebase(user);
-
           const docRef = doc(db, "workoutPlans", user.uid);
           const docSnap = await getDoc(docRef);
 
@@ -89,7 +84,7 @@ const WorkoutsPage = () => {
       }
     };
     fetchWorkouts();
-  }, [user, syncWithFirebase]);
+  }, [user]);
 
   /**
    * Atualiza o meta (séries/repetições) de um exercício específico no estado.
@@ -181,20 +176,20 @@ const WorkoutsPage = () => {
   );
 
   return (
-    <main className="min-h-screen bg-slate-100 py-3 px-3">
+    <main className="min-h-screen bg-slate-100 dark:bg-slate-900 py-3 px-3">
       <div className="max-w-[600px] w-full mx-auto pb-6">
         <Header />
 
         {workoutsToRender.length > 0 ? (
           workoutsToRender.map(renderWorkout)
         ) : (
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-center mt-6">
-            <h3 className="text-lg font-bold text-slate-800 mb-2">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 text-center mt-6">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 mb-2">
               {workouts.length === 0
                 ? "Nenhum Treino Criado 📝"
                 : "Dia de Descanso! 🛌"}
             </h3>
-            <p className="text-[0.9rem] text-slate-500 font-medium mb-4">
+            <p className="text-[0.9rem] text-slate-500 dark:text-slate-400 font-medium mb-4">
               {workouts.length === 0
                 ? "Você ainda não possui treinos cadastrados. Acesse os ajustes para gerar sua ficha."
                 : "Você não tem treinos programados para hoje. Aproveite para recuperar as energias ou faça um cardio leve."}

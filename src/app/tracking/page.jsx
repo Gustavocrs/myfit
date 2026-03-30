@@ -2,7 +2,7 @@
 
 import {useState, useEffect, useContext} from "react";
 import Header from "@/components/Header";
-import AlertDialog from "@/components/AlertDialog";
+import {ConfirmDialog} from "@/components/ConfirmDialog";
 import {
   FiSave,
   FiCamera,
@@ -16,9 +16,7 @@ import {Input} from "@/components/Input";
 import {Button} from "@/components/Button";
 import {notifySuccess, notifyError, notifyWarn} from "@/components/Notify";
 import {useConfirmDialog} from "@/hooks/useConfirmDialog";
-import {useEscapeKey} from "@/hooks/useEscapeKey";
 import {AuthContext} from "@/context/AuthContext";
-import {ThemeContext} from "@/context/ThemeContext";
 import {db} from "@/lib/firebase";
 import {doc, getDoc, setDoc} from "firebase/firestore";
 
@@ -28,7 +26,6 @@ const TrackingPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentEval, setCurrentEval] = useState(null);
   const {user} = useContext(AuthContext);
-  const {syncWithFirebase} = useContext(ThemeContext);
   const confirmDialog = useConfirmDialog();
 
   useEffect(() => {
@@ -39,15 +36,6 @@ const TrackingPage = () => {
           const docSnap = await getDoc(docRef);
           if (docSnap.exists() && docSnap.data().history) {
             setEvaluations(docSnap.data().history);
-          }
-          const settingsRef = doc(db, "userSettings", user.uid);
-          const settingsSnap = await getDoc(settingsRef);
-          if (settingsSnap.exists()) {
-            if (settingsSnap.data().isDarkMode) {
-              document.documentElement.classList.add("dark");
-            } else {
-              document.documentElement.classList.remove("dark");
-            }
           }
         } catch (error) {
           console.error("Erro ao buscar avaliações:", error);
@@ -179,20 +167,25 @@ const TrackingPage = () => {
 
   const handleDeleteEval = (id, e) => {
     e.stopPropagation(); // Evita abrir o modo de edição ao clicar na lixeira
-    confirmDialog.openAlert(async () => {
-      try {
-        const updated = evaluations.filter((ev) => ev.id !== id);
-        if (user?.uid) {
-          await setDoc(doc(db, "evaluations", user.uid), {
-            history: updated,
-          });
+    confirmDialog.openDialog({
+      title: "Excluir avaliação?",
+      message:
+        "Essa ação remove a avaliação do histórico permanentemente. Deseja continuar?",
+      onConfirm: async () => {
+        try {
+          const updated = evaluations.filter((ev) => ev.id !== id);
+          if (user?.uid) {
+            await setDoc(doc(db, "evaluations", user.uid), {
+              history: updated,
+            });
+          }
+          setEvaluations(updated);
+          notifySuccess("Avaliação excluída com sucesso!");
+        } catch (error) {
+          console.error("Erro ao excluir avaliação:", error);
+          notifyError("Erro ao excluir a avaliação.");
         }
-        setEvaluations(updated);
-        notifySuccess("Avaliação excluída com sucesso!");
-      } catch (error) {
-        console.error("Erro ao excluir avaliação:", error);
-        notifyError("Erro ao excluir a avaliação.");
-      }
+      },
     });
   };
 
@@ -232,18 +225,21 @@ const TrackingPage = () => {
   };
 
   return (
-    <main className="min-h-screen bg-slate-100 py-3 px-3">
-      <AlertDialog
-        state={confirmDialog.alertState}
-        setState={confirmDialog.closeAlert}
-        onEdit={confirmDialog.onEdit}
-      />
+    <main className="min-h-screen bg-slate-100 dark:bg-slate-900 py-3 px-3">
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        onClose={confirmDialog.closeDialog}
+        onConfirm={confirmDialog.handleConfirm}
+        title={confirmDialog.title}
+      >
+        {confirmDialog.message}
+      </ConfirmDialog>
       <div className="max-w-[600px] w-full mx-auto pb-6">
         <Header />
 
         {!isEditing ? (
           <>
-            <h2 className="text-[1.1rem] font-extrabold text-slate-800 uppercase mb-4 mt-6">
+            <h2 className="text-[1.1rem] font-extrabold text-slate-800 dark:text-slate-200 uppercase mb-4 mt-6">
               Minhas Avaliações
             </h2>
             <Button
@@ -257,7 +253,7 @@ const TrackingPage = () => {
 
             <div className="flex flex-col gap-4">
               {evaluations.length === 0 ? (
-                <p className="text-center text-slate-500 text-[0.9rem] py-4 bg-white rounded-xl border border-slate-200">
+                <p className="text-center text-slate-500 dark:text-slate-400 text-[0.9rem] py-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
                   Nenhuma avaliação registrada no histórico.
                 </p>
               ) : (
@@ -265,17 +261,17 @@ const TrackingPage = () => {
                   <div
                     key={ev.id}
                     onClick={() => handleEditEval(ev)}
-                    className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center cursor-pointer hover:border-orange-300 transition-colors group"
+                    className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex justify-between items-center cursor-pointer hover:border-orange-300 transition-colors group"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                      <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300">
                         <FiActivity size={20} />
                       </div>
                       <div className="flex flex-col">
-                        <span className="font-extrabold text-slate-800">
+                        <span className="font-extrabold text-slate-800 dark:text-slate-100">
                           Avaliação {ev.date}
                         </span>
-                        <span className="text-[0.8rem] text-slate-500 font-medium mt-0.5">
+                        <span className="text-[0.8rem] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
                           {ev.bio?.peso ? `${ev.bio.peso} kg` : "S/ Peso"} •{" "}
                           {ev.bio?.gorduraCorporal
                             ? `${ev.bio.gorduraCorporal}% BF`
@@ -285,7 +281,7 @@ const TrackingPage = () => {
                     </div>
                     <button
                       onClick={(e) => handleDeleteEval(ev.id, e)}
-                      className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                      className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 transition-colors"
                     >
                       <FiTrash2 size={18} />
                     </button>
@@ -302,32 +298,32 @@ const TrackingPage = () => {
                   setIsEditing(false);
                   setCurrentEval(null);
                 }}
-                className="p-2 bg-slate-200 rounded-full text-slate-600 hover:bg-slate-300 transition-colors"
+                className="p-2 bg-slate-200 dark:bg-slate-700 rounded-full text-slate-600 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
               >
                 <FiArrowLeft size={18} />
               </button>
-              <h2 className="text-[1.1rem] font-extrabold text-slate-800 uppercase">
+              <h2 className="text-[1.1rem] font-extrabold text-slate-800 dark:text-slate-200 uppercase">
                 Avaliação {currentEval.date}
               </h2>
             </div>
 
             {/* TABS DE NAVEGAÇÃO INTERNA */}
-            <div className="flex bg-slate-200 p-1 rounded-lg mb-6 shadow-inner overflow-x-auto">
+            <div className="flex bg-slate-200 dark:bg-slate-800 p-1 rounded-lg mb-6 shadow-inner overflow-x-auto border border-slate-200 dark:border-slate-700">
               <button
                 onClick={() => setActiveTab("bio")}
-                className={`flex-1 min-w-[100px] py-2 text-[0.8rem] uppercase font-bold rounded-md transition-colors flex items-center justify-center gap-2 ${activeTab === "bio" ? "bg-white text-orange-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                className={`flex-1 min-w-[100px] py-2 text-[0.8rem] uppercase font-bold rounded-md transition-colors flex items-center justify-center gap-2 ${activeTab === "bio" ? "bg-white dark:bg-slate-700 text-orange-600 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}
               >
                 <FiActivity size={16} /> Bio
               </button>
               <button
                 onClick={() => setActiveTab("medidas")}
-                className={`flex-1 min-w-[100px] py-2 text-[0.8rem] uppercase font-bold rounded-md transition-colors flex items-center justify-center gap-2 ${activeTab === "medidas" ? "bg-white text-orange-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                className={`flex-1 min-w-[100px] py-2 text-[0.8rem] uppercase font-bold rounded-md transition-colors flex items-center justify-center gap-2 ${activeTab === "medidas" ? "bg-white dark:bg-slate-700 text-orange-600 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}
               >
                 <FiSliders size={16} /> Medidas
               </button>
               <button
                 onClick={() => setActiveTab("photos")}
-                className={`flex-1 min-w-[100px] py-2 text-[0.8rem] uppercase font-bold rounded-md transition-colors flex items-center justify-center gap-2 ${activeTab === "photos" ? "bg-white text-orange-600 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
+                className={`flex-1 min-w-[100px] py-2 text-[0.8rem] uppercase font-bold rounded-md transition-colors flex items-center justify-center gap-2 ${activeTab === "photos" ? "bg-white dark:bg-slate-700 text-orange-600 shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"}`}
               >
                 <FiCamera size={16} /> Fotos
               </button>
@@ -335,7 +331,7 @@ const TrackingPage = () => {
 
             {/* CONTEÚDO: BIOIMPEDÂNCIA */}
             {activeTab === "bio" && (
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4">
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     name="peso"
@@ -383,7 +379,7 @@ const TrackingPage = () => {
 
             {/* CONTEÚDO: MEDIDAS CORPORAIS */}
             {activeTab === "medidas" && (
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4">
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4">
                   <Input
                     name="ombro"
@@ -573,18 +569,18 @@ const TrackingPage = () => {
 
             {/* CONTEÚDO: FOTOS */}
             {activeTab === "photos" && (
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4">
-                <p className="text-[0.85rem] text-slate-500 font-medium text-center">
+              <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col gap-4">
+                <p className="text-[0.85rem] text-slate-500 dark:text-slate-400 font-medium text-center">
                   Faça o upload do seu shape atual para comparar sua evolução ao
                   longo das semanas.
                 </p>
 
-                <label className="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-slate-50 transition-colors group">
+                <label className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors group">
                   <FiCamera
                     size={32}
-                    className="text-slate-400 group-hover:text-orange-500 transition-colors"
+                    className="text-slate-400 dark:text-slate-500 group-hover:text-orange-500 transition-colors"
                   />
-                  <span className="text-[0.9rem] font-bold text-slate-600 group-hover:text-orange-600 transition-colors">
+                  <span className="text-[0.9rem] font-bold text-slate-600 dark:text-slate-300 group-hover:text-orange-600 transition-colors">
                     Tocar para abrir a câmera
                   </span>
                   <input
@@ -598,7 +594,7 @@ const TrackingPage = () => {
 
                 {currentEval.photos && currentEval.photos.length > 0 && (
                   <div className="mt-2 flex flex-col gap-3">
-                    <span className="text-[0.8rem] font-extrabold text-slate-800 uppercase pl-1">
+                    <span className="text-[0.8rem] font-extrabold text-slate-800 dark:text-slate-200 uppercase pl-1">
                       Pré-visualização:
                     </span>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -612,9 +608,9 @@ const TrackingPage = () => {
                         return (
                           <div
                             key={index}
-                            className="flex flex-col gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 shadow-sm"
+                            className="flex flex-col gap-2 bg-slate-50 dark:bg-slate-700/50 p-3 rounded-xl border border-slate-200 dark:border-slate-600 shadow-sm"
                           >
-                            <div className="relative w-full aspect-[3/4] bg-slate-200 rounded-lg overflow-hidden">
+                            <div className="relative w-full aspect-[3/4] bg-slate-200 dark:bg-slate-700 rounded-lg overflow-hidden">
                               <img
                                 src={previewUrl}
                                 alt={`Shape ${photoObj.label || "Frente"} ${index + 1}`}
@@ -630,7 +626,7 @@ const TrackingPage = () => {
                             </div>
 
                             <div className="flex flex-col gap-1 mt-1">
-                              <label className="text-[0.75rem] font-bold text-slate-500 uppercase px-1">
+                              <label className="text-[0.75rem] font-bold text-slate-500 dark:text-slate-400 uppercase px-1">
                                 Posição da Foto
                               </label>
                               <select
@@ -638,7 +634,7 @@ const TrackingPage = () => {
                                 onChange={(e) =>
                                   handlePhotoLabelChange(index, e.target.value)
                                 }
-                                className="w-full p-2.5 border border-slate-300 rounded-lg text-[0.9rem] font-medium bg-white text-slate-700 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all cursor-pointer"
+                                className="w-full p-2.5 border border-slate-300 dark:border-slate-600 rounded-lg text-[0.9rem] font-medium bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-100 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all cursor-pointer"
                               >
                                 <option value="Frente">Frente</option>
                                 <option value="Costas">Costas</option>
@@ -653,7 +649,7 @@ const TrackingPage = () => {
                   </div>
                 )}
                 {(currentEval.photos || []).length > 0 && (
-                  <p className="text-[0.75rem] text-slate-500 font-medium text-center">
+                  <p className="text-[0.75rem] text-slate-500 dark:text-slate-400 font-medium text-center">
                     {currentEval.photos.length} foto(s) anexada(s).
                   </p>
                 )}

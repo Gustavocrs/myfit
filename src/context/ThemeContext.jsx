@@ -2,11 +2,13 @@
 
 import {createContext, useContext, useEffect, useState} from "react";
 import {doc, getDoc, setDoc} from "firebase/firestore";
+import {AuthContext} from "@/context/AuthContext";
 import {db} from "@/lib/firebase";
 
 export const ThemeContext = createContext();
 
 export const ThemeProvider = ({children}) => {
+  const {user} = useContext(AuthContext);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +48,31 @@ export const ThemeProvider = ({children}) => {
     initializeTheme();
   }, []);
 
-  const toggleDarkMode = async (user) => {
+  useEffect(() => {
+    const sincronizarTemaDoUsuario = async () => {
+      if (!user?.uid) {
+        return;
+      }
+
+      try {
+        const settingsRef = doc(db, "userSettings", user.uid);
+        const settingsSnap = await getDoc(settingsRef);
+
+        if (settingsSnap.exists()) {
+          const isDark = Boolean(settingsSnap.data().isDarkMode);
+          setIsDarkMode(isDark);
+          applyTheme(isDark);
+          localStorage.setItem("isDarkMode", JSON.stringify(isDark));
+        }
+      } catch (error) {
+        console.error("Erro ao sincronizar tema do Firebase:", error);
+      }
+    };
+
+    sincronizarTemaDoUsuario();
+  }, [user]);
+
+  const toggleDarkMode = async (activeUser = user) => {
     const newValue = !isDarkMode;
     setIsDarkMode(newValue);
     applyTheme(newValue);
@@ -55,10 +81,10 @@ export const ThemeProvider = ({children}) => {
     localStorage.setItem("isDarkMode", JSON.stringify(newValue));
 
     // Salva no Firebase se o usuário está autenticado
-    if (user?.uid) {
+    if (activeUser?.uid) {
       try {
         await setDoc(
-          doc(db, "userSettings", user.uid),
+          doc(db, "userSettings", activeUser.uid),
           {isDarkMode: newValue},
           {merge: true},
         );
@@ -69,13 +95,13 @@ export const ThemeProvider = ({children}) => {
   };
 
   // Sincroniza com Firebase quando o usuário fizer login
-  const syncWithFirebase = async (user) => {
-    if (user?.uid) {
+  const syncWithFirebase = async (activeUser = user) => {
+    if (activeUser?.uid) {
       try {
-        const settingsRef = doc(db, "userSettings", user.uid);
+        const settingsRef = doc(db, "userSettings", activeUser.uid);
         const settingsSnap = await getDoc(settingsRef);
         if (settingsSnap.exists()) {
-          const isDark = settingsSnap.data().isDarkMode || false;
+          const isDark = Boolean(settingsSnap.data().isDarkMode);
           setIsDarkMode(isDark);
           applyTheme(isDark);
           localStorage.setItem("isDarkMode", JSON.stringify(isDark));

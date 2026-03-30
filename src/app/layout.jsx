@@ -35,6 +35,8 @@ const RootLayout = ({children}) => {
                 const isDarkMode = localStorage.getItem("isDarkMode");
                 if (isDarkMode === "true") {
                   document.documentElement.classList.add("dark");
+                } else {
+                  document.documentElement.classList.remove("dark");
                 }
               } catch (e) {}
             `,

@@ -2,7 +2,6 @@
 
 import {useEffect, useContext, useState} from "react";
 import Header from "@/components/Header";
-import InfoBox, {InfoSubtitle} from "@/components/InfoBox";
 import Link from "next/link";
 import {FiActivity, FiTrendingUp} from "react-icons/fi";
 import {AuthContext} from "@/context/AuthContext";
@@ -14,18 +13,9 @@ const Home = () => {
   const [pesoAtual, setPesoAtual] = useState("--");
 
   useEffect(() => {
-    const fetchSettingsAndEvals = async () => {
+    const fetchEvals = async () => {
       if (user?.uid) {
         try {
-          // Aplica o tema escuro se estiver ativado
-          const settingsRef = doc(db, "userSettings", user.uid);
-          const settingsSnap = await getDoc(settingsRef);
-          if (settingsSnap.exists() && settingsSnap.data().isDarkMode) {
-            document.documentElement.classList.add("dark");
-          } else {
-            document.documentElement.classList.remove("dark");
-          }
-
           // Puxa o último peso registrado na Evolução
           const evalsRef = doc(db, "evaluations", user.uid);
           const evalsSnap = await getDoc(evalsRef);
@@ -40,35 +30,35 @@ const Home = () => {
         }
       }
     };
-    fetchSettingsAndEvals();
+    fetchEvals();
   }, [user]);
 
   return (
-    <main className="min-h-screen bg-slate-100 py-3 px-3">
+    <main className="min-h-screen bg-slate-100 dark:bg-slate-900 py-3 px-3">
       <div className="max-w-[600px] w-full mx-auto pb-6">
         <Header />
 
-        <h2 className="text-[1.1rem] font-extrabold text-slate-800 uppercase mb-4 mt-6">
+        <h2 className="text-[1.1rem] font-extrabold text-slate-800 dark:text-slate-200 uppercase mb-4 mt-6">
           Visão Geral
         </h2>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center text-center gap-2">
+          <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center gap-2">
             <FiActivity size={28} className="text-orange-600" />
-            <span className="text-[0.8rem] text-slate-500 font-bold uppercase">
+            <span className="text-[0.8rem] text-slate-500 dark:text-slate-400 font-bold uppercase">
               Treino Atual
             </span>
-            <span className="text-[1.1rem] font-black text-slate-800 uppercase">
+            <span className="text-[1.1rem] font-black text-slate-800 dark:text-slate-100 uppercase">
               Treino A
             </span>
           </div>
 
-          <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col items-center justify-center text-center gap-2">
+          <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center text-center gap-2">
             <FiTrendingUp size={28} className="text-green-600" />
-            <span className="text-[0.8rem] text-slate-500 font-bold uppercase">
+            <span className="text-[0.8rem] text-slate-500 dark:text-slate-400 font-bold uppercase">
               Peso Atual
             </span>
-            <span className="text-[1.1rem] font-black text-slate-800 uppercase">
+            <span className="text-[1.1rem] font-black text-slate-800 dark:text-slate-100 uppercase">
               {pesoAtual !== "--" ? `${pesoAtual} kg` : "-- kg"}
             </span>
           </div>
@@ -76,7 +66,7 @@ const Home = () => {
 
         <Link
           href="/workouts"
-          className="block w-full bg-slate-900 text-white text-center py-4 rounded-xl font-extrabold uppercase tracking-wide shadow-md mb-8 transition-transform active:scale-[0.98]"
+          className="block w-full bg-slate-900 dark:bg-orange-600 text-white text-center py-4 rounded-xl font-extrabold uppercase tracking-wide shadow-md mb-8 transition-transform active:scale-[0.98] hover:opacity-95"
         >
           Acessar Meus Treinos
         </Link>
