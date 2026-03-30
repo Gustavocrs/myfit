@@ -22,7 +22,7 @@ import {ThemeContext} from "@/context/ThemeContext";
 import exercisesData from "@/data/exercises.json";
 import {exercicioPertenceAoGrupo} from "@/utils/gruposMusculares";
 import {db} from "@/lib/firebase";
-import {doc, getDoc, setDoc} from "firebase/firestore";
+import {deleteDoc, doc, getDoc, setDoc} from "firebase/firestore";
 
 const MUSCLE_GROUPS = [
   "Peito",
@@ -382,7 +382,13 @@ const SettingsPage = () => {
 
         if (user?.uid) {
           try {
-            await setDoc(doc(db, "workoutPlans", user.uid), {plans: updated});
+            if (updated.length === 0) {
+              await deleteDoc(doc(db, "workoutPlans", user.uid));
+            } else {
+              await setDoc(doc(db, "workoutPlans", user.uid), {
+                plans: updated,
+              });
+            }
             notifySuccess("Treino excluído com sucesso!");
           } catch (error) {
             console.error("Erro ao excluir no Firebase:", error);
@@ -608,11 +614,12 @@ const SettingsPage = () => {
                     return (
                       <Input
                         key={area}
-                        type="multiselect"
+                        type="autocomplete"
                         name={`exercises_${area}`}
                         label={`Exercícios de ${area} (Opcional)`}
-                        placeholder="Selecione ou deixe vazio p/ sortear"
+                        placeholder="Pesquise, selecione ou deixe vazio p/ sortear"
                         data={options}
+                        multiple
                         value={workoutConfig.selectedExercises?.[area] || []}
                         onChange={(e) => {
                           setWorkoutConfig((prev) => ({
@@ -755,7 +762,7 @@ const SettingsPage = () => {
                       disabled={pendingDays.length === 0}
                       className="flex-1 !bg-orange-600 hover:!bg-orange-700 text-white !h-12 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Gerar
+                      Gerar/Salvar
                     </Button>
                   </div>
                 </div>

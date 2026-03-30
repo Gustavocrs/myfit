@@ -347,9 +347,11 @@ export const Input = ({
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     padding: "9px",
-                    height: "8rem",
-                    maxWidth: "27rem",
-                    alignItems: "flex-start",
+                    width: "100%",
+                    maxWidth: "100%",
+                    height: multiple ? "auto" : "3.5rem",
+                    minHeight: multiple ? "8rem" : "3.5rem",
+                    alignItems: multiple ? "flex-start" : "center",
                     overflow: "hidden",
                     backgroundColor: "var(--mui-input-bg, white)",
                     borderRadius: "0.5rem",
@@ -363,6 +365,9 @@ export const Input = ({
                       borderColor: "#0ea5e9",
                       borderWidth: "2px",
                     },
+                  },
+                  "& .MuiAutocomplete-inputRoot": {
+                    alignItems: multiple ? "flex-start" : "center",
                   },
                   "& .MuiInputBase-input": {
                     color: "var(--mui-input-color, #0f172a)",
