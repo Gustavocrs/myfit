@@ -303,11 +303,21 @@
     "id": "rosca_scott_triceps_corda",
     "name": "Bi-Set: Rosca Scott + Tríceps Corda",
     "defaultMeta": "4 x 10-12",
-    "muscleGroup": "Bíceps",
+    "muscleGroup": ["Bíceps", "Tríceps"],
     "restTime": "⏱️ 90s",
     "details": "Isolamento Duplo",
     "color": "purple",
     "instructions": "Sem descanso: Rosca Scott e vá direto para a polia alta. Só descanse após completar ambos. Falha apenas na série 4."
+  },
+  {
+    "id": "rosca_45_triceps_frances",
+    "name": "Bi-Set: Rosca 45º + Tríceps Francês (Polia)",
+    "defaultMeta": "3 x 10-12",
+    "muscleGroup": ["Bíceps", "Tríceps"],
+    "restTime": "⏱️ 90s",
+    "details": "Alongamento",
+    "color": "purple",
+    "instructions": "No francês, banco a 90º de costas para a polia baixa com corda. Coluna totalmente colada no banco, zerando a compressão discal."
   },
   {
     "id": "rosca_direta_barra",

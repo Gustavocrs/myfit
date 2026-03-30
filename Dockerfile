@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
-# Etapa 1: Build
-FROM node:20-alpine AS builder
+# Etapa 1: Base
+FROM node:20-alpine AS base
 
 WORKDIR /app
 
@@ -13,14 +13,22 @@ ENV NEXT_TELEMETRY_DISABLED=1 \
     NPM_CONFIG_FETCH_RETRY_MINTIMEOUT=20000 \
     NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=120000 \
     NPM_CONFIG_FETCH_TIMEOUT=600000 \
+    NPM_CONFIG_MAXSOCKETS=1 \
     NPM_CONFIG_UPDATE_NOTIFIER=false
+
+FROM base AS deps
 
 # Copiar arquivos de dependências
 COPY package*.json ./
+COPY .npmrc ./
 
 # Instalar dependências com cache persistente do npm para reduzir timeout de rede
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --legacy-peer-deps --prefer-offline --progress=false
+
+FROM base AS builder
+
+COPY --from=deps /app/node_modules ./node_modules
 
 # Copiar código fonte
 COPY . .
@@ -35,7 +43,7 @@ RUN npm run build
 RUN npm prune --production --legacy-peer-deps
 
 # Etapa 2: Runtime (otimizado)
-FROM node:20-alpine
+FROM node:20-alpine AS runner
 
 WORKDIR /app
 

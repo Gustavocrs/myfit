@@ -1,130 +1,72 @@
 "use client";
 
-import {createContext, useContext, useEffect, useState} from "react";
-import {doc, getDoc, setDoc} from "firebase/firestore";
-import {AuthContext} from "@/context/AuthContext";
+import {createContext, useState, useEffect, useCallback} from "react";
 import {db} from "@/lib/firebase";
+import {doc, getDoc, setDoc} from "firebase/firestore";
 
 export const ThemeContext = createContext();
 
 export const ThemeProvider = ({children}) => {
-  const {user} = useContext(AuthContext);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  // Aplica o tema ao documento (síncrono)
-  const applyTheme = (isDark) => {
-    if (typeof document !== "undefined") {
-      if (isDark) {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window === "undefined") {
+      return false;
     }
-  };
+    // Inicia o estado com o valor do localStorage para evitar piscar a tela
+    const savedTheme = localStorage.getItem("theme");
+    return savedTheme === "dark";
+  });
 
-  // Carrega o tema do localStorage e do Firebase na inicialização
+  // Efeito que aplica/remove a classe 'dark' no HTML e salva no localStorage
   useEffect(() => {
-    const initializeTheme = async () => {
-      try {
-        // Tenta carregar do localStorage primeiro (para inicialização rápida)
-        const savedDarkMode = localStorage.getItem("isDarkMode");
-        if (savedDarkMode !== null) {
-          const isDark = JSON.parse(savedDarkMode);
-          setIsDarkMode(isDark);
-          applyTheme(isDark);
-        } else {
-          // Se não há no localStorage, assume light mode por padrão
-          applyTheme(false);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar tema do localStorage:", error);
-        applyTheme(false);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const root = window.document.documentElement;
+    if (isDarkMode) {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
 
-    initializeTheme();
+  // Sincroniza o tema com o Firebase na inicialização
+  const syncWithFirebase = useCallback(async (user) => {
+    if (!user?.uid) return;
+    try {
+      const settingsRef = doc(db, "userSettings", user.uid);
+      const settingsSnap = await getDoc(settingsRef);
+      if (
+        settingsSnap.exists() &&
+        settingsSnap.data().hasOwnProperty("isDarkMode")
+      ) {
+        setIsDarkMode(settingsSnap.data().isDarkMode);
+      }
+    } catch (error) {
+      console.error("Erro ao sincronizar tema com Firebase:", error);
+    }
   }, []);
 
-  useEffect(() => {
-    const sincronizarTemaDoUsuario = async () => {
-      if (!user?.uid) {
-        return;
-      }
-
-      try {
-        const settingsRef = doc(db, "userSettings", user.uid);
-        const settingsSnap = await getDoc(settingsRef);
-
-        if (settingsSnap.exists()) {
-          const isDark = Boolean(settingsSnap.data().isDarkMode);
-          setIsDarkMode(isDark);
-          applyTheme(isDark);
-          localStorage.setItem("isDarkMode", JSON.stringify(isDark));
-        }
-      } catch (error) {
-        console.error("Erro ao sincronizar tema do Firebase:", error);
-      }
-    };
-
-    sincronizarTemaDoUsuario();
-  }, [user]);
-
-  const toggleDarkMode = async (activeUser = user) => {
-    const newValue = !isDarkMode;
-    setIsDarkMode(newValue);
-    applyTheme(newValue);
-
-    // Salva no localStorage
-    localStorage.setItem("isDarkMode", JSON.stringify(newValue));
-
-    // Salva no Firebase se o usuário está autenticado
-    if (activeUser?.uid) {
-      try {
-        await setDoc(
-          doc(db, "userSettings", activeUser.uid),
-          {isDarkMode: newValue},
+  // Alterna o tema e salva a preferência no Firebase
+  const toggleDarkMode = useCallback(async (user) => {
+    setIsDarkMode((currentIsDarkMode) => {
+      const newIsDarkMode = !currentIsDarkMode;
+      if (user?.uid) {
+        setDoc(
+          doc(db, "userSettings", user.uid),
+          {isDarkMode: newIsDarkMode},
           {merge: true},
+        ).catch((error) =>
+          console.error("Erro ao salvar tema no Firebase:", error),
         );
-      } catch (error) {
-        console.error("Erro ao salvar tema no Firebase:", error);
       }
-    }
-  };
-
-  // Sincroniza com Firebase quando o usuário fizer login
-  const syncWithFirebase = async (activeUser = user) => {
-    if (activeUser?.uid) {
-      try {
-        const settingsRef = doc(db, "userSettings", activeUser.uid);
-        const settingsSnap = await getDoc(settingsRef);
-        if (settingsSnap.exists()) {
-          const isDark = Boolean(settingsSnap.data().isDarkMode);
-          setIsDarkMode(isDark);
-          applyTheme(isDark);
-          localStorage.setItem("isDarkMode", JSON.stringify(isDark));
-        }
-      } catch (error) {
-        console.error("Erro ao sincronizar tema do Firebase:", error);
-      }
-    }
-  };
+      return newIsDarkMode;
+    });
+  }, []);
 
   return (
     <ThemeContext.Provider
-      value={{isDarkMode, toggleDarkMode, syncWithFirebase, loading}}
+      value={{isDarkMode, toggleDarkMode, syncWithFirebase}}
     >
       {children}
     </ThemeContext.Provider>
   );
-};
-
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme deve ser usado dentro de ThemeProvider");
-  }
-  return context;
 };
