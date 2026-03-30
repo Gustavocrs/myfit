@@ -628,16 +628,24 @@ const TrackingPage = () => {
                                 <FiTrash2 size={16} />
                               </button>
                             </div>
-                            <Input
-                              type="select"
-                              name={`photoLabel_${index}`}
-                              label="Posição da Foto"
-                              value={photoObj.label || "Frente"}
-                              onChange={(e) =>
-                                handlePhotoLabelChange(index, e.target.value)
-                              }
-                              data={["Frente", "Costas", "LD", "LE"]}
-                            />
+
+                            <div className="flex flex-col gap-1 mt-1">
+                              <label className="text-[0.75rem] font-bold text-slate-500 uppercase px-1">
+                                Posição da Foto
+                              </label>
+                              <select
+                                value={photoObj.label || "Frente"}
+                                onChange={(e) =>
+                                  handlePhotoLabelChange(index, e.target.value)
+                                }
+                                className="w-full p-2.5 border border-slate-300 rounded-lg text-[0.9rem] font-medium bg-white text-slate-700 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all cursor-pointer"
+                              >
+                                <option value="Frente">Frente</option>
+                                <option value="Costas">Costas</option>
+                                <option value="LD">Perfil Direito (LD)</option>
+                                <option value="LE">Perfil Esquerdo (LE)</option>
+                              </select>
+                            </div>
                           </div>
                         );
                       })}
