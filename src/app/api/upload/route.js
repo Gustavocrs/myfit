@@ -1,5 +1,5 @@
 import {NextResponse} from "next/server";
-import {writeFile} from "fs/promises";
+import {writeFile, mkdir} from "fs/promises";
 import path from "path";
 
 export async function POST(request) {
@@ -15,6 +15,10 @@ export async function POST(request) {
     }
 
     const uploadedFileUrls = [];
+    const uploadDir = path.join(process.cwd(), "public/uploads");
+
+    // Garante que o diretório exista antes de tentar salvar qualquer arquivo
+    await mkdir(uploadDir, {recursive: true});
 
     for (const file of files) {
       const bytes = await file.arrayBuffer();
@@ -22,7 +26,6 @@ export async function POST(request) {
 
       // Cria um nome de arquivo único para evitar colisões
       const filename = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-      const uploadDir = path.join(process.cwd(), "public/uploads");
       const filePath = path.join(uploadDir, filename);
 
       // Escreve o arquivo no servidor
@@ -35,6 +38,9 @@ export async function POST(request) {
     return NextResponse.json({success: true, urls: uploadedFileUrls});
   } catch (error) {
     console.error("Erro no upload de arquivos:", error);
-    return NextResponse.json({success: false, message: "Falha no upload."});
+    return NextResponse.json(
+      {success: false, message: "Falha no upload."},
+      {status: 500},
+    );
   }
 }

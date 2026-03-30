@@ -91,7 +91,11 @@ const TrackingPage = () => {
   };
 
   const handleEditEval = (ev) => {
-    setCurrentEval(ev);
+    const normalizedPhotos = (ev.photos || []).map((p) => {
+      if (typeof p === "string") return {url: p, label: "Frente"};
+      return p;
+    });
+    setCurrentEval({...ev, photos: normalizedPhotos});
     setIsEditing(true);
     setActiveTab("bio");
   };
@@ -111,16 +115,15 @@ const TrackingPage = () => {
       try {
         const evalData = {...currentEval};
 
-        // 1. Separa os arquivos novos das URLs existentes
-        const newFiles = evalData.photos.filter((p) => p instanceof File);
-        const existingUrls = evalData.photos.filter(
-          (p) => typeof p === "string",
+        // 1. Separa os objetos que contêm arquivos novos (File)
+        const newFilesObjs = evalData.photos.filter(
+          (p) => p.file instanceof File,
         );
 
         let uploadedUrls = [];
-        if (newFiles.length > 0) {
+        if (newFilesObjs.length > 0) {
           const formData = new FormData();
-          newFiles.forEach((file) => formData.append("files", file));
+          newFilesObjs.forEach((p) => formData.append("files", p.file));
 
           // 2. Envia os novos arquivos para a API de upload
           const response = await fetch("/api/upload", {
@@ -135,8 +138,14 @@ const TrackingPage = () => {
           uploadedUrls = result.urls;
         }
 
-        // 3. Combina as URLs antigas e as novas para salvar no DB
-        evalData.photos = [...existingUrls, ...uploadedUrls];
+        // 3. Atualiza as fotos para salvar (troca File pela URL e mantém as existentes)
+        let uploadIndex = 0;
+        evalData.photos = evalData.photos.map((p) => {
+          if (p.file instanceof File) {
+            return {url: uploadedUrls[uploadIndex++], label: p.label};
+          }
+          return {url: p.url || p, label: p.label || "Frente"}; // Retrocompatibilidade
+        });
 
         // 4. Atualiza o histórico de avaliações
         const existingIdx = evaluations.findIndex((e) => e.id === evalData.id);
@@ -190,10 +199,14 @@ const TrackingPage = () => {
   const handlePhotoUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
+      const newPhotoObjects = files.map((file) => ({
+        file: file,
+        label: "Frente", // Padrão inicial
+      }));
       setCurrentEval((prev) => ({
         ...prev,
-        // Adiciona os File objects diretamente ao estado
-        photos: [...(prev.photos || []), ...files],
+        // Adiciona os novos objetos de fotos ao estado
+        photos: [...(prev.photos || []), ...newPhotoObjects],
       }));
     }
   };
@@ -205,6 +218,15 @@ const TrackingPage = () => {
       const updatedPhotos = prev.photos.filter(
         (_, index) => index !== indexToRemove,
       );
+      return {...prev, photos: updatedPhotos};
+    });
+  };
+
+  const handlePhotoLabelChange = (index, newLabel) => {
+    setCurrentEval((prev) => {
+      const updatedPhotos = [...prev.photos];
+      // Atualiza o label do objeto da foto no índice específico
+      updatedPhotos[index] = {...updatedPhotos[index], label: newLabel};
       return {...prev, photos: updatedPhotos};
     });
   };
@@ -579,28 +601,43 @@ const TrackingPage = () => {
                     <span className="text-[0.8rem] font-extrabold text-slate-800 uppercase pl-1">
                       Pré-visualização:
                     </span>
-                    <div className="grid grid-cols-2 gap-4">
-                      {(currentEval.photos || []).map((photo, index) => {
-                        // Se for um File, cria uma URL temporária para preview. Se for string, já é uma URL.
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {(currentEval.photos || []).map((photoObj, index) => {
+                        // Cria uma URL temporária se for File recém-adicionado, senão usa a string existente
                         const previewUrl =
-                          photo instanceof File
-                            ? URL.createObjectURL(photo)
-                            : photo;
+                          photoObj.file instanceof File
+                            ? URL.createObjectURL(photoObj.file)
+                            : photoObj.url || photoObj;
 
                         return (
-                          <div key={index} className="relative">
-                            <img
-                              src={previewUrl}
-                              alt={`Shape atual ${index + 1}`}
-                              className="w-full h-auto object-cover rounded-lg shadow-sm border border-slate-200"
+                          <div
+                            key={index}
+                            className="flex flex-col gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 shadow-sm"
+                          >
+                            <div className="relative w-full aspect-[3/4] bg-slate-200 rounded-lg overflow-hidden">
+                              <img
+                                src={previewUrl}
+                                alt={`Shape ${photoObj.label || "Frente"} ${index + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                              <button
+                                onClick={() => handleRemovePhoto(index)}
+                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 shadow-md hover:bg-red-600 transition-colors"
+                                aria-label={`Remover foto ${index + 1}`}
+                              >
+                                <FiTrash2 size={16} />
+                              </button>
+                            </div>
+                            <Input
+                              type="select"
+                              name={`photoLabel_${index}`}
+                              label="Posição da Foto"
+                              value={photoObj.label || "Frente"}
+                              onChange={(e) =>
+                                handlePhotoLabelChange(index, e.target.value)
+                              }
+                              data={["Frente", "Costas", "LD", "LE"]}
                             />
-                            <button
-                              onClick={() => handleRemovePhoto(index)}
-                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors"
-                              aria-label={`Remover foto ${index + 1}`}
-                            >
-                              <FiTrash2 size={16} />
-                            </button>
                           </div>
                         );
                       })}
