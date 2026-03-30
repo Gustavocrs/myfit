@@ -29,10 +29,6 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package*.json ./
 
-# Copiar script de inicialização
-COPY startup.sh ./
-RUN chmod +x ./startup.sh
-
 # Criar diretório de uploads com permissões apropriadas
 RUN mkdir -p /app/public/uploads && chmod -R 777 /app/public/uploads
 
@@ -54,5 +50,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # Usar dumb-init para executar o app
 ENTRYPOINT ["dumb-init", "--"]
 
-# Executar startup.sh que vai criar as pastas e iniciar a app
-CMD ["./startup.sh"]
+# Iniciar a aplicação
+CMD ["npm", "start"]
