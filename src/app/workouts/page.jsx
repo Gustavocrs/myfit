@@ -3,7 +3,6 @@
 import {useState, useEffect, useContext} from "react";
 import Header from "@/components/Header";
 import DayDivider from "@/components/DayDivider";
-import SectionLabel from "@/components/SectionLabel";
 import ExerciseCard from "@/components/ExerciseCard";
 import Loading from "@/components/Loading";
 import {AuthContext} from "@/context/AuthContext";
@@ -153,20 +152,12 @@ const WorkoutsPage = () => {
 
       {workout.sections.map((section, sectionIdx) => (
         <div key={sectionIdx}>
-          <SectionLabel text={section.label} />
-
           {section.exercises.map((ex, exIdx) => (
             <ExerciseCard
               key={exIdx}
               name={ex.name}
               meta={ex.meta || ex.defaultMeta}
-              muscle={obterGrupoMuscularExibicao(
-                ex,
-                section.label.replace(/^👑\s*Foco:\s*/, "").replace(
-                  /^Foco:\s*/,
-                  "",
-                ),
-              )}
+              muscle={obterGrupoMuscularExibicao(ex)}
               rest={ex.rest || ex.restTime}
               detail={ex.detail || ex.details}
               color={ex.color}

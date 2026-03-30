@@ -20,7 +20,11 @@ import {
 import {AuthContext} from "@/context/AuthContext";
 import {ThemeContext} from "@/context/ThemeContext";
 import exercisesData from "@/data/exercises.json";
-import {exercicioPertenceAoGrupo} from "@/utils/gruposMusculares";
+import {
+  exercicioPertenceAoGrupo,
+  normalizarGruposMusculares,
+  obterGruposMuscularesExercicio,
+} from "@/utils/gruposMusculares";
 import {db} from "@/lib/firebase";
 import {deleteDoc, doc, getDoc, setDoc} from "firebase/firestore";
 
@@ -34,6 +38,122 @@ const MUSCLE_GROUPS = [
   "Panturrilha",
   "Abdômen",
 ];
+
+const ordenarGruposMusculares = (grupos = []) => {
+  const gruposUnicos = [...new Set(grupos)].filter(Boolean);
+  const gruposConhecidos = MUSCLE_GROUPS.filter((grupo) =>
+    gruposUnicos.includes(grupo),
+  );
+  const gruposRestantes = gruposUnicos.filter(
+    (grupo) => !MUSCLE_GROUPS.includes(grupo),
+  );
+
+  return [...gruposConhecidos, ...gruposRestantes];
+};
+
+const limparLabelFoco = (label = "") =>
+  label.replace(/^👑\s*Foco:\s*/, "").replace(/^Foco:\s*/, "").trim();
+
+const montarLabelFoco = (grupos = []) => grupos.join(" + ");
+
+const montarBadgeTreino = (sections = []) =>
+  sections
+    .map((section) => `${limparLabelFoco(section.label)} (${section.exercises.length})`)
+    .join(" • ");
+
+const obterGruposDaSecao = (section = {}) => {
+  return ordenarGruposMusculares(
+    normalizarGruposMusculares(limparLabelFoco(section.label)),
+  ).filter((grupo) => MUSCLE_GROUPS.includes(grupo));
+};
+
+const mapearConfiguracaoDoTreino = (workout = {}) => {
+  const selectedExercises = {};
+  const areaCounts = {};
+
+  (workout.sections || []).forEach((section) => {
+    const gruposDaSecao = obterGruposDaSecao(section);
+
+    gruposDaSecao.forEach((grupo) => {
+      selectedExercises[grupo] = selectedExercises[grupo] || [];
+    });
+
+    (section.exercises || []).forEach((exercise) => {
+      gruposDaSecao.forEach((grupo) => {
+        if (!selectedExercises[grupo].includes(exercise.id)) {
+          selectedExercises[grupo].push(exercise.id);
+        }
+      });
+    });
+  });
+
+  const areas = MUSCLE_GROUPS.filter((grupo) => selectedExercises[grupo]?.length);
+
+  areas.forEach((grupo) => {
+    areaCounts[grupo] = selectedExercises[grupo]?.length || 3;
+  });
+
+  return {
+    areas,
+    selectedExercises,
+    areaCounts,
+  };
+};
+
+const construirSecoesTreino = ({
+  areas = [],
+  selectedExercises = {},
+  areaCounts = {},
+  generateExercises = false,
+  existingSections = [],
+}) => {
+  return areas.reduce((sections, area) => {
+    let selectedForArea = [];
+    const matching = exercisesData.filter((exercise) =>
+      exercicioPertenceAoGrupo(exercise, area),
+    );
+
+    if (selectedExercises?.[area]?.length > 0) {
+      const selectedIds = selectedExercises[area];
+      selectedForArea = selectedIds
+        .map((id) => matching.find((exercise) => exercise.id === id))
+        .filter(Boolean);
+    } else if (generateExercises && matching.length > 0) {
+      const count = areaCounts?.[area] || 3;
+      const shuffled = [...matching].sort(() => 0.5 - Math.random());
+      selectedForArea = shuffled.slice(0, count);
+    } else {
+      const existingSection = existingSections.find(
+        (section) => limparLabelFoco(section.label) === area,
+      );
+
+      if (existingSection?.exercises) {
+        selectedForArea = existingSection.exercises;
+      }
+    }
+
+    if (selectedForArea.length > 0) {
+      sections.push({
+        label: montarLabelFoco([area]),
+        exercises: selectedForArea.map((exercise) => {
+          const gruposDoExercicio = ordenarGruposMusculares(
+            obterGruposMuscularesExercicio(exercise),
+          ).filter((grupo) => MUSCLE_GROUPS.includes(grupo));
+
+          return {
+            ...exercise,
+            muscle:
+              gruposDoExercicio.length > 0
+                ? gruposDoExercicio.join(" + ")
+                : area,
+          };
+        }),
+      });
+    }
+
+    return sections;
+  }, []);
+};
 
 const SettingsPage = () => {
   const {isDarkMode, toggleDarkMode} = useContext(ThemeContext);
@@ -131,16 +251,8 @@ const SettingsPage = () => {
 
   const handleEditWorkout = (index) => {
     const wk = savedWorkouts[index];
-    const areas = wk.badge.split(" • ").map((a) => a.split(" ")[0]);
-    const selectedExercises = {};
-    const areaCounts = {};
-    areas.forEach((area) => {
-      const sec = wk.sections?.find((s) => s.label === `Foco: ${area}`);
-      if (sec && sec.exercises) {
-        selectedExercises[area] = sec.exercises.map((ex) => ex.id);
-        areaCounts[area] = sec.exercises.length;
-      }
-    });
+    const {areas, selectedExercises, areaCounts} =
+      mapearConfiguracaoDoTreino(wk);
 
     setWorkoutConfig({
       day: wk.id,
@@ -205,47 +317,19 @@ const SettingsPage = () => {
     let newDays = [];
 
     pendingDays.forEach((dayConf) => {
-      let sections = [];
-      dayConf.areas.forEach((area) => {
-        let selectedForArea = [];
-        const matching = exercisesData.filter((ex) =>
-          exercicioPertenceAoGrupo(ex, area),
-        );
-
-        if (dayConf.selectedExercises?.[area]?.length > 0) {
-          const selectedIds = dayConf.selectedExercises[area];
-          // Mescla com exercício manual e preserva a defaultMeta
-          selectedForArea = selectedIds
-            .map((id) => matching.find((ex) => ex.id === id))
-            .filter(Boolean);
-        } else if (generateExercises && matching.length > 0) {
-          // Caso deixe em branco, sorteia a quantidade definida
-          const count = dayConf.areaCounts?.[area] || 3;
-          const shuffled = [...matching].sort(() => 0.5 - Math.random());
-          selectedForArea = shuffled.slice(0, count);
-        }
-
-        if (selectedForArea.length > 0) {
-          sections.push({
-            label: `Foco: ${area}`,
-            exercises: selectedForArea.map((ex) => ({...ex, muscle: area})),
-          });
-        }
+      const sections = construirSecoesTreino({
+        areas: dayConf.areas,
+        selectedExercises: dayConf.selectedExercises,
+        areaCounts: dayConf.areaCounts,
+        generateExercises,
       });
 
       newDays.push({
         id: dayConf.day,
         title: dayConf.name,
         daysOfWeek: dayConf.daysOfWeek || [],
-        badge: dayConf.areas
-          .map((area) => {
-            const count =
-              sections.find((s) => s.label === `Foco: ${area}`)?.exercises
-                ?.length || 0;
-            return `${area} (${count})`;
-          })
-          .join(" • "),
-        sections: sections,
+        badge: montarBadgeTreino(sections),
+        sections,
       });
     });
 
@@ -295,53 +379,20 @@ const SettingsPage = () => {
       return;
     }
 
-    let sections = [];
-    workoutConfig.areas.forEach((area) => {
-      let selectedForArea = [];
-      const matching = exercisesData.filter((ex) =>
-        exercicioPertenceAoGrupo(ex, area),
-      );
-
-      if (workoutConfig.selectedExercises?.[area]?.length > 0) {
-        const selectedIds = workoutConfig.selectedExercises[area];
-        selectedForArea = selectedIds
-          .map((id) => matching.find((ex) => ex.id === id))
-          .filter(Boolean);
-      } else if (generateExercises && matching.length > 0) {
-        const count = workoutConfig.areaCounts?.[area] || 3;
-        const shuffled = [...matching].sort(() => 0.5 - Math.random());
-        selectedForArea = shuffled.slice(0, count);
-      } else {
-        // Preserva os exercícios existentes na edição se não for para regerar
-        const existingSection = savedWorkouts[editingIndex]?.sections?.find(
-          (s) => s.label === `Foco: ${area}`,
-        );
-        if (existingSection?.exercises) {
-          selectedForArea = existingSection.exercises;
-        }
-      }
-
-      if (selectedForArea.length > 0) {
-        sections.push({
-          label: `Foco: ${area}`,
-          exercises: selectedForArea.map((ex) => ({...ex, muscle: area})),
-        });
-      }
+    const sections = construirSecoesTreino({
+      areas: workoutConfig.areas,
+      selectedExercises: workoutConfig.selectedExercises,
+      areaCounts: workoutConfig.areaCounts,
+      generateExercises,
+      existingSections: savedWorkouts[editingIndex]?.sections || [],
     });
 
     const newWorkout = {
       id: workoutConfig.day,
       title: `Treino ${workoutConfig.day}`,
       daysOfWeek: workoutConfig.daysOfWeek || [],
-      badge: workoutConfig.areas
-        .map((area) => {
-          const count =
-            sections.find((s) => s.label === `Foco: ${area}`)?.exercises
-              ?.length || 0;
-          return `${area} (${count})`;
-        })
-        .join(" • "),
-      sections: sections,
+      badge: montarBadgeTreino(sections),
+      sections,
     };
 
     let updatedWorkouts = [...savedWorkouts];

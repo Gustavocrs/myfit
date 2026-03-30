@@ -182,9 +182,7 @@ export const generateWorkout = (config, trackingData = {}) => {
       allExercises = [...allExercises, ...selected];
     });
 
-    const sections = [
-      {label: `👑 Foco: ${day.badge}`, exercises: allExercises},
-    ];
+    const sections = [{label: day.badge, exercises: allExercises}];
 
     // Regra de Negócio Integrada (Evolução x Objetivo)
     const needsCardio =
