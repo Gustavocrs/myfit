@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
+
   /*
    * Se sua aplicação é servida a partir de um sub-caminho, você precisa configurar o `basePath`.
    * Por exemplo, se seu aplicativo estiver em https://myfit.systechdev.com.br/myfit,

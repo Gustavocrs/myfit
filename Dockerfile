@@ -1,7 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-# Etapa 1: Base
-FROM node:20-alpine AS base
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -17,63 +16,36 @@ ENV NEXT_TELEMETRY_DISABLED=1 \
     NPM_CONFIG_MAXSOCKETS=1 \
     NPM_CONFIG_UPDATE_NOTIFIER=false
 
-FROM base AS deps
-
-# Copiar arquivos de dependências
 COPY package*.json ./
 COPY .npmrc ./
 
-# Instalar dependências com cache persistente do npm para reduzir timeout de rede
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --legacy-peer-deps --prefer-offline --verbose
+    npm install --verbose
 
-FROM base AS builder
-
-COPY --from=deps /app/node_modules ./node_modules
-
-# Copiar código fonte
 COPY . .
 
-# Garantir que o diretório public exista, mesmo que vazio, para evitar falhas no COPY
-RUN mkdir -p public
-
-# Build da aplicação
+RUN mkdir -p public public/uploads
 RUN npm run build
 
-# Remover dependências de desenvolvimento para otimizar a imagem final
-RUN npm prune --production --legacy-peer-deps
-
-# Etapa 2: Runtime (otimizado)
 FROM node:20-alpine AS runner
 
 WORKDIR /app
 
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    PORT=3000
 
-# Copiar dependências do builder (apenas as usadas em produção)
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.mjs ./
-COPY --from=builder /app/package*.json ./
+COPY --from=builder --chown=node:node /app/public ./public
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 
-# Criar diretório de uploads com permissões apropriadas
-RUN mkdir -p /app/public/uploads
+RUN mkdir -p /app/public/uploads && chown -R node:node /app/public
 
-# Criar usuário não-root para segurança
-RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
+USER node
 
-# Trocar proprietário dos diretórios
-RUN chown -R nextjs:nodejs /app
-
-USER nextjs
-
-# Expor porta
 EXPOSE 3000
 
-# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:3000/ || exit 1
+  CMD ["node", "-e", "fetch('http://127.0.0.1:3000/').then((res) => process.exit(res.ok ? 0 : 1)).catch(() => process.exit(1))"]
 
-# Iniciar a aplicação
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
