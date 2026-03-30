@@ -32,8 +32,11 @@ const RootLayout = ({children}) => {
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                const isDarkMode = localStorage.getItem("isDarkMode");
-                if (isDarkMode === "true") {
+                const temaBooleano = localStorage.getItem("isDarkMode");
+                const temaLegado = localStorage.getItem("theme");
+                const deveUsarTemaEscuro = temaBooleano === "true" || (!temaBooleano && temaLegado === "dark");
+
+                if (deveUsarTemaEscuro) {
                   document.documentElement.classList.add("dark");
                 } else {
                   document.documentElement.classList.remove("dark");

@@ -1,8 +1,10 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  color-scheme: light;
 }
 
 @theme inline {
@@ -20,6 +22,7 @@ html.dark {
   --mui-input-border: #475569;
   --mui-input-color: #f8fafc;
   --mui-input-placeholder: #94a3b8;
+  color-scheme: dark;
 }
 
 body {
