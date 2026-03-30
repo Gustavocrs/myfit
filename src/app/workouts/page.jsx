@@ -32,8 +32,11 @@ const WorkoutsPage = () => {
 
           const docRef = doc(db, "workoutPlans", user.uid);
           const docSnap = await getDoc(docRef);
+
+          let fetchedPlans = [];
           if (docSnap.exists() && docSnap.data().plans?.length > 0) {
-            setWorkouts(docSnap.data().plans);
+            fetchedPlans = docSnap.data().plans;
+            setWorkouts(fetchedPlans);
           } else {
             setWorkouts([]);
           }
@@ -45,6 +48,36 @@ const WorkoutsPage = () => {
               settingsSnap.data().showTodayWorkoutOnly || false,
             );
           }
+
+          // Identificar o treino de hoje baseado na configuração
+          const todayStr = new Date().getDay().toString();
+          let todayWorkoutId = null;
+
+          const workoutForToday = fetchedPlans.find(
+            (w) => w.daysOfWeek && w.daysOfWeek.includes(todayStr),
+          );
+
+          if (workoutForToday) {
+            todayWorkoutId = workoutForToday.id;
+          } else {
+            // Fallback para a lógica de dias fixos caso não exista customização
+            const todayNum = new Date().getDay();
+            switch (todayNum) {
+              case 1:
+              case 4:
+                todayWorkoutId = "A";
+                break;
+              case 2:
+              case 5:
+                todayWorkoutId = "B";
+                break;
+              case 3:
+                todayWorkoutId = "C";
+                break;
+            }
+          }
+
+          setActiveWorkoutId(todayWorkoutId);
         } else {
           setWorkouts([]);
         }
@@ -52,25 +85,6 @@ const WorkoutsPage = () => {
         console.error("Erro ao buscar treinos do Firebase:", error);
         setWorkouts([]);
       } finally {
-        // Lógica de mapeamento dos dias da semana (0 = Domingo ... 6 = Sábado)
-        const today = new Date().getDay();
-        let todayWorkoutId = null;
-
-        switch (today) {
-          case 1: // Segunda
-          case 4: // Quinta
-            todayWorkoutId = "A";
-            break;
-          case 2: // Terça
-          case 5: // Sexta
-            todayWorkoutId = "B";
-            break;
-          case 3: // Quarta
-            todayWorkoutId = "C";
-            break;
-        }
-
-        setActiveWorkoutId(todayWorkoutId);
         setLoading(false);
       }
     };

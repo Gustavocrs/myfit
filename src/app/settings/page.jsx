@@ -44,6 +44,7 @@ const SettingsPage = () => {
     areas: [],
     selectedExercises: {},
     areaCounts: {},
+    daysOfWeek: [],
   });
   const {logout, user} = useContext(AuthContext);
   const [savedWorkouts, setSavedWorkouts] = useState([]);
@@ -149,6 +150,7 @@ const SettingsPage = () => {
       areas: areas,
       selectedExercises: selectedExercises,
       areaCounts: areaCounts,
+      daysOfWeek: wk.daysOfWeek || [],
     });
     setEditingIndex(index);
     setShowWorkoutForm(true);
@@ -173,6 +175,7 @@ const SettingsPage = () => {
       areas: [],
       selectedExercises: {},
       areaCounts: {},
+      daysOfWeek: [],
     });
   };
 
@@ -236,6 +239,7 @@ const SettingsPage = () => {
       newDays.push({
         id: dayConf.day,
         title: dayConf.name,
+        daysOfWeek: dayConf.daysOfWeek || [],
         badge: dayConf.areas
           .map((area) => {
             const count =
@@ -283,6 +287,7 @@ const SettingsPage = () => {
       areas: [],
       selectedExercises: {},
       areaCounts: {},
+      daysOfWeek: [],
     });
   };
 
@@ -330,6 +335,7 @@ const SettingsPage = () => {
     const newWorkout = {
       id: workoutConfig.day,
       title: `Treino ${workoutConfig.day}`,
+      daysOfWeek: workoutConfig.daysOfWeek || [],
       badge: workoutConfig.areas
         .map((area) => {
           const count =
@@ -364,6 +370,7 @@ const SettingsPage = () => {
       areas: [],
       selectedExercises: {},
       areaCounts: {},
+      daysOfWeek: [],
     });
   };
 
@@ -495,14 +502,38 @@ const SettingsPage = () => {
             </>
           ) : (
             <div className="flex flex-col gap-4 mt-2 border-t border-slate-100 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
-              <Input
-                type="select"
-                name="day"
-                label="Identificador (Dia)"
-                value={workoutConfig.day}
-                onChange={handleWorkoutConfigChange}
-                data={["A", "B", "C", "D", "E", "F"]}
-              />
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  type="select"
+                  name="day"
+                  label="Identificador (Dia)"
+                  value={workoutConfig.day}
+                  onChange={handleWorkoutConfigChange}
+                  data={["A", "B", "C", "D", "E", "F"]}
+                />
+                <Input
+                  type="multiselect"
+                  name="daysOfWeek"
+                  label="Dias da Semana"
+                  placeholder="Selecione..."
+                  data={[
+                    {label: "Domingo", value: "0"},
+                    {label: "Segunda", value: "1"},
+                    {label: "Terça", value: "2"},
+                    {label: "Quarta", value: "3"},
+                    {label: "Quinta", value: "4"},
+                    {label: "Sexta", value: "5"},
+                    {label: "Sábado", value: "6"},
+                  ]}
+                  value={workoutConfig.daysOfWeek || []}
+                  onChange={(e) => {
+                    setWorkoutConfig((prev) => ({
+                      ...prev,
+                      daysOfWeek: e.target.value,
+                    }));
+                  }}
+                />
+              </div>
 
               <div className="flex flex-col gap-2">
                 <label className="text-[0.85rem] font-bold text-slate-700">
@@ -609,6 +640,7 @@ const SettingsPage = () => {
                           areas: [],
                           selectedExercises: {},
                           areaCounts: {},
+                          daysOfWeek: [],
                         });
                       }}
                       className="flex-1 !h-12"
@@ -702,6 +734,7 @@ const SettingsPage = () => {
                           areas: [],
                           selectedExercises: {},
                           areaCounts: {},
+                          daysOfWeek: [],
                         });
                       }}
                       className="flex-1 !h-12"
