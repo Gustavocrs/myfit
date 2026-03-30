@@ -1,5 +1,5 @@
 # Etapa 1: Build
-FROM node:latest AS builder
+FROM node:20 AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Etapa 2: Runtime (otimizado)
-FROM node:latest-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
