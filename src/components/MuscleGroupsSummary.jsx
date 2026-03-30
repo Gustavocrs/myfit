@@ -20,9 +20,6 @@ const MuscleGroupsSummary = ({areas, selectedExercises, areaCounts}) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <h4 className="text-[0.75rem] font-bold text-slate-500 uppercase tracking-wider">
-        Grupos Musculares
-      </h4>
       <div className="flex flex-wrap gap-2">
         {areas && areas.length > 0 ? (
           areas.map((area) => {

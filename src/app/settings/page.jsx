@@ -40,7 +40,6 @@ const SettingsPage = () => {
   const [showTodayWorkoutOnly, setShowTodayWorkoutOnly] = useState(false);
   const [showWorkoutForm, setShowWorkoutForm] = useState(false);
   const [workoutConfig, setWorkoutConfig] = useState({
-    name: "",
     day: "A",
     areas: [],
     selectedExercises: {},
@@ -146,7 +145,6 @@ const SettingsPage = () => {
     });
 
     setWorkoutConfig({
-      name: wk.title,
       day: wk.id,
       areas: areas,
       selectedExercises: selectedExercises,
@@ -157,23 +155,20 @@ const SettingsPage = () => {
   };
 
   const handleAddPendingDay = () => {
-    if (
-      !workoutConfig.name ||
-      !workoutConfig.day ||
-      workoutConfig.areas.length === 0
-    ) {
-      notifyError(
-        "Por favor, preencha o nome, selecione o dia e pelo menos uma área.",
-      );
+    if (!workoutConfig.day || workoutConfig.areas.length === 0) {
+      notifyError("Por favor, selecione o dia e pelo menos uma área.");
       return;
     }
 
-    setPendingDays([...pendingDays, workoutConfig]);
+    const dayWithNameToAdd = {
+      ...workoutConfig,
+      name: `Treino ${workoutConfig.day}`,
+    };
+    setPendingDays([...pendingDays, dayWithNameToAdd]);
 
     // Auto-avança o select de dias para facilitar a digitação (A -> B -> C...)
     const nextDays = {A: "B", B: "C", C: "D", D: "E", E: "F", F: "A"};
     setWorkoutConfig({
-      name: "",
       day: nextDays[workoutConfig.day] || "A",
       areas: [],
       selectedExercises: {},
@@ -284,7 +279,6 @@ const SettingsPage = () => {
     setShowWorkoutForm(false);
     setPendingDays([]);
     setWorkoutConfig({
-      name: "",
       day: "A",
       areas: [],
       selectedExercises: {},
@@ -294,14 +288,8 @@ const SettingsPage = () => {
 
   // Função específica para quando o usuário edita apenas um dia isolado
   const handleSaveSingleDay = async (generateExercises = false) => {
-    if (
-      !workoutConfig.name ||
-      !workoutConfig.day ||
-      workoutConfig.areas.length === 0
-    ) {
-      notifyError(
-        "Por favor, preencha o nome, selecione o dia e pelo menos uma área.",
-      );
+    if (!workoutConfig.day || workoutConfig.areas.length === 0) {
+      notifyError("Por favor, selecione o dia e pelo menos uma área.");
       return;
     }
 
@@ -341,7 +329,7 @@ const SettingsPage = () => {
 
     const newWorkout = {
       id: workoutConfig.day,
-      title: workoutConfig.name,
+      title: `Treino ${workoutConfig.day}`,
       badge: workoutConfig.areas
         .map((area) => {
           const count =
@@ -372,7 +360,6 @@ const SettingsPage = () => {
     setShowWorkoutForm(false);
     setEditingIndex(null);
     setWorkoutConfig({
-      name: "",
       day: "A",
       areas: [],
       selectedExercises: {},
@@ -395,6 +382,17 @@ const SettingsPage = () => {
       }
     });
   };
+
+  // Aggregate data for weekly summary
+  const weeklySummary = pendingDays.reduce(
+    (acc, day) => {
+      day.areas.forEach((area) => acc.areas.add(area));
+      Object.assign(acc.selectedExercises, day.selectedExercises);
+      Object.assign(acc.areaCounts, day.areaCounts);
+      return acc;
+    },
+    {areas: new Set(), selectedExercises: {}, areaCounts: {}},
+  );
 
   return (
     <main className="min-h-screen bg-slate-100 py-3 px-3">
@@ -494,14 +492,6 @@ const SettingsPage = () => {
             </>
           ) : (
             <div className="flex flex-col gap-4 mt-2 border-t border-slate-100 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
-              <Input
-                type="text"
-                name="name"
-                label="Nome do Treino"
-                value={workoutConfig.name}
-                onChange={handleWorkoutConfigChange}
-                placeholder="Ex: Treino A - Superior"
-              />
               <Input
                 type="select"
                 name="day"
@@ -612,7 +602,6 @@ const SettingsPage = () => {
                         setShowWorkoutForm(false);
                         setEditingIndex(null);
                         setWorkoutConfig({
-                          name: "",
                           day: "A",
                           areas: [],
                           selectedExercises: {},
@@ -644,57 +633,58 @@ const SettingsPage = () => {
 
                   {pendingDays.length > 0 && (
                     <div className="flex flex-col gap-3 mt-2 border-t border-slate-100 pt-3">
-                      <h4 className="text-[0.8rem] font-bold text-slate-500 uppercase">
-                        Dias Adicionados
-                      </h4>
-
                       {/* Layout em duas colunas: Dias e Resumo de Grupos */}
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         {/* Coluna 1: Lista de Dias */}
-                        <div className="flex flex-col gap-2">
-                          {pendingDays.map((pd, i) => (
-                            <div
-                              key={i}
-                              className="flex justify-between items-center bg-slate-50 p-3 rounded-md border border-slate-200"
-                            >
-                              <div className="flex flex-col">
-                                <span className="font-bold text-slate-700 text-[0.85rem]">
-                                  {pd.day} - {pd.name}
-                                </span>
+                        <div>
+                          <h4 className="text-[0.8rem] font-bold text-slate-500 uppercase mb-2">
+                            Dias Adicionados
+                          </h4>
+                          <div className="flex flex-col gap-2">
+                            {pendingDays.map((pd, i) => (
+                              <div
+                                key={i}
+                                className="flex justify-between items-center bg-slate-50 p-3 rounded-md border border-slate-200"
+                              >
+                                <div className="flex flex-col">
+                                  <span className="font-bold text-slate-700 text-[0.85rem]">
+                                    {pd.name}
+                                  </span>
+                                </div>
+                                <div className="flex items-center">
+                                  <button
+                                    onClick={() => handleEditPendingDay(i)}
+                                    className="p-2 text-slate-400 hover:text-orange-500 transition-colors"
+                                  >
+                                    <FiEdit2 size={16} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleRemovePendingDay(i)}
+                                    className="text-red-500 hover:text-red-700 p-2"
+                                  >
+                                    <FiTrash2 size={16} />
+                                  </button>
+                                </div>
                               </div>
-                              <div className="flex items-center">
-                                <button
-                                  onClick={() => handleEditPendingDay(i)}
-                                  className="p-2 text-slate-400 hover:text-orange-500 transition-colors"
-                                >
-                                  <FiEdit2 size={16} />
-                                </button>
-                                <button
-                                  onClick={() => handleRemovePendingDay(i)}
-                                  className="text-red-500 hover:text-red-700 p-2"
-                                >
-                                  <FiTrash2 size={16} />
-                                </button>
-                              </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
 
                         {/* Coluna 2: Resumo de Grupos Musculares */}
-                        <div className="bg-slate-50 p-4 rounded-md border border-slate-200">
-                          <div className="flex flex-col gap-3">
-                            {pendingDays.map((pd, i) => (
-                              <div key={i} className="flex flex-col gap-1">
-                                <span className="text-[0.75rem] font-bold text-slate-600 uppercase tracking-wider">
-                                  {pd.day} - {pd.name}
-                                </span>
-                                <MuscleGroupsSummary
-                                  areas={pd.areas}
-                                  selectedExercises={pd.selectedExercises}
-                                  areaCounts={pd.areaCounts}
-                                />
-                              </div>
-                            ))}
+
+                        <div>
+                          <h4 className="text-[0.8rem] font-bold text-slate-500 uppercase mb-3">
+                            Grupos Musculares
+                          </h4>
+
+                          <div className="bg-slate-50 p-4 rounded-md border border-slate-200">
+                            <MuscleGroupsSummary
+                              areas={Array.from(weeklySummary.areas)}
+                              selectedExercises={
+                                weeklySummary.selectedExercises
+                              }
+                              areaCounts={weeklySummary.areaCounts}
+                            />
                           </div>
                         </div>
                       </div>
@@ -708,7 +698,6 @@ const SettingsPage = () => {
                         setShowWorkoutForm(false);
                         setPendingDays([]);
                         setWorkoutConfig({
-                          name: "",
                           day: "A",
                           areas: [],
                           selectedExercises: {},
