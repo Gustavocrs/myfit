@@ -81,13 +81,13 @@ const Home = () => {
           Acessar Meus Treinos
         </Link>
 
-        <div className="flex flex-col gap-4 mt-10">
+        {/* <div className="flex flex-col gap-4 mt-10">
           <InfoBox title="🔥 Próximos Passos">
             <InfoSubtitle>Configuração Inicial</InfoSubtitle>
             Acesse a aba de evolução para registrar suas medidas e sua primeira
             foto de acompanhamento.
           </InfoBox>
-        </div>
+        </div> */}
       </div>
     </main>
   );

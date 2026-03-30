@@ -70,18 +70,21 @@ const TrackingPage = () => {
         gorduraVisceral: "",
       },
       medidas: {
+        ombro: "",
         torax: "",
         cintura: "",
         abdomen: "",
         quadril: "",
         bracoDir: "",
         bracoEsq: "",
+        antebracoDir: "",
+        antebracoEsq: "",
         coxaDir: "",
         coxaEsq: "",
         pantDir: "",
         pantEsq: "",
       },
-      photoPreview: null,
+      photos: [], // Agora um array para múltiplas fotos
     });
     setIsEditing(true);
     setActiveTab("bio");
@@ -113,7 +116,7 @@ const TrackingPage = () => {
       updated = [currentEval, ...evaluations]; // Nova sempre em primeiro
     }
 
-    setEvaluations(updated);
+    setEvaluations(updated.sort((a, b) => new Date(b.date) - new Date(a.date))); // Garante que a lista esteja ordenada por data, mais recente primeiro.
 
     if (user?.uid) {
       try {
@@ -154,15 +157,35 @@ const TrackingPage = () => {
     });
   };
 
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCurrentEval((prev) => ({...prev, photoPreview: reader.result}));
-      };
-      reader.readAsDataURL(file); // Converte para Base64 para salvar no Firebase junto
+  const handlePhotoUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      const newPhotoPreviews = await Promise.all(
+        files.map((file) => {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+          });
+        }),
+      );
+      setCurrentEval((prev) => ({
+        ...prev,
+        // Concatena as novas fotos com as existentes
+        photos: [...(prev.photos || []), ...newPhotoPreviews],
+      }));
     }
+  };
+
+  const handleRemovePhoto = (indexToRemove) => {
+    if (!currentEval) return;
+
+    setCurrentEval((prev) => {
+      const updatedPhotos = prev.photos.filter(
+        (_, index) => index !== indexToRemove,
+      );
+      return {...prev, photos: updatedPhotos};
+    });
   };
 
   return (
@@ -320,6 +343,20 @@ const TrackingPage = () => {
               <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4">
                   <Input
+                    name="ombro"
+                    value={currentEval.medidas.ombro || ""}
+                    onChange={(e) =>
+                      handleNestedChange(
+                        "medidas",
+                        e.target.name,
+                        e.target.value,
+                      )
+                    }
+                    label="Ombro (cm)"
+                    type="number"
+                    placeholder="00.0"
+                  />
+                  <Input
                     name="torax"
                     value={currentEval.medidas.torax}
                     onChange={(e) =>
@@ -400,6 +437,34 @@ const TrackingPage = () => {
                       )
                     }
                     label="Braço Esq. (cm)"
+                    type="number"
+                    placeholder="00.0"
+                  />
+                  <Input
+                    name="antebracoDir"
+                    value={currentEval.medidas.antebracoDir || ""}
+                    onChange={(e) =>
+                      handleNestedChange(
+                        "medidas",
+                        e.target.name,
+                        e.target.value,
+                      )
+                    }
+                    label="Antebraço Dir. (cm)"
+                    type="number"
+                    placeholder="00.0"
+                  />
+                  <Input
+                    name="antebracoEsq"
+                    value={currentEval.medidas.antebracoEsq || ""}
+                    onChange={(e) =>
+                      handleNestedChange(
+                        "medidas",
+                        e.target.name,
+                        e.target.value,
+                      )
+                    }
+                    label="Antebraço Esq. (cm)"
                     type="number"
                     placeholder="00.0"
                   />
@@ -488,17 +553,35 @@ const TrackingPage = () => {
                   />
                 </label>
 
-                {currentEval.photoPreview && (
+                {currentEval.photos && currentEval.photos.length > 0 && (
                   <div className="mt-2 flex flex-col gap-3">
                     <span className="text-[0.8rem] font-extrabold text-slate-800 uppercase pl-1">
                       Pré-visualização:
                     </span>
-                    <img
-                      src={currentEval.photoPreview}
-                      alt="Shape atual"
-                      className="w-full h-auto object-cover rounded-lg shadow-sm border border-slate-200"
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      {(currentEval.photos || []).map((photo, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={photo}
+                            alt={`Shape atual ${index + 1}`}
+                            className="w-full h-auto object-cover rounded-lg shadow-sm border border-slate-200"
+                          />
+                          <button
+                            onClick={() => handleRemovePhoto(index)}
+                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors"
+                            aria-label={`Remover foto ${index + 1}`}
+                          >
+                            <FiTrash2 size={16} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
+                )}
+                {(currentEval.photos || []).length > 0 && (
+                  <p className="text-[0.75rem] text-slate-500 font-medium text-center">
+                    {currentEval.photos.length} foto(s) anexada(s).
+                  </p>
                 )}
               </div>
             )}
