@@ -1,92 +1,41 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Otimizações de imagem
-  images: {
-    formats: ["image/webp", "image/avif"],
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
-    ],
-  },
+  /*
+   * Se sua aplicação é servida a partir de um sub-caminho, você precisa configurar o `basePath`.
+   * Por exemplo, se seu aplicativo estiver em https://myfit.systechdev.com.br/myfit,
+   * você descomentaria a seguinte linha:
+   *
+   * basePath: '/myfit',
+   */
 
-  // Gzip compression
-  compress: true,
-
-  // Production source maps (desabilitar se não precisar para debug)
-  productionBrowserSourceMaps: false,
-
-  // Poweredby header
-  poweredByHeader: false,
-
-  // Versioning de assets
-  generateEtags: true,
-
-  // Trailing slash
-  trailingSlash: false,
-
-  // Headers customizados
+  // Adicione a configuração de headers para corrigir problemas de Content Security Policy
   async headers() {
+    const cspHeader = `
+      default-src 'self';
+      script-src 'self' 'unsafe-eval' 'unsafe-inline';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' blob: data:;
+      font-src 'self';
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      frame-ancestors 'none';
+      connect-src 'self' *.google.com *.googleapis.com *.firebaseapp.com *.firebaseio.com;
+    `
+      .replace(/\s{2,}/g, " ")
+      .trim();
+
     return [
       {
-        source: "/api/files/:path*",
+        source: "/(.*)",
         headers: [
           {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
-          },
-          {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-        ],
-      },
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "X-Frame-Options",
-            value: "SAMEORIGIN",
-          },
-          {
-            key: "X-Content-Type-Options",
-            value: "nosniff",
-          },
-          {
-            key: "X-XSS-Protection",
-            value: "1; mode=block",
-          },
-          {
-            key: "Referrer-Policy",
-            value: "strict-origin-when-cross-origin",
+            key: "Content-Security-Policy",
+            value: cspHeader,
           },
         ],
       },
     ];
-  },
-
-  // Redirects
-  async redirects() {
-    return [
-      {
-        source: "/home",
-        destination: "/",
-        permanent: true,
-      },
-    ];
-  },
-
-  // Rewrites para proxy de uploads
-  async rewrites() {
-    return {
-      beforeFiles: [
-        {
-          source: "/uploads/:path*",
-          destination: "/api/files/:path*",
-        },
-      ],
-    };
   },
 };
 
