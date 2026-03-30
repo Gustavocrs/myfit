@@ -20,6 +20,7 @@ const nextConfig = {
       base-uri 'self';
       form-action 'self';
       frame-ancestors 'none';
+      frame-src 'self' https://myfit-ad4cc.firebaseapp.com;
       connect-src 'self' *.google.com *.googleapis.com *.firebaseapp.com *.firebaseio.com;
     `
       .replace(/\s{2,}/g, " ")

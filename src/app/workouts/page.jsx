@@ -7,6 +7,7 @@ import SectionLabel from "@/components/SectionLabel";
 import ExerciseCard from "@/components/ExerciseCard";
 import Loading from "@/components/Loading";
 import {AuthContext} from "@/context/AuthContext";
+import {notifyError, notifySuccess} from "@/components/Notify";
 import {ThemeContext} from "@/context/ThemeContext";
 import {db} from "@/lib/firebase";
 import {doc, getDoc, setDoc} from "firebase/firestore";
@@ -114,8 +115,10 @@ const WorkoutsPage = () => {
       try {
         const docRef = doc(db, "workoutPlans", user.uid);
         await setDoc(docRef, {plans: updatedWorkouts}, {merge: true});
+        notifySuccess("Alteração salva!");
       } catch (error) {
         console.error("Erro ao salvar séries no Firebase:", error);
+        notifyError("Erro ao salvar a alteração.");
       }
     }
   };
@@ -124,8 +127,14 @@ const WorkoutsPage = () => {
     return <Loading message="Carregando treinos..." />;
   }
 
-  // Filtra apenas o treino do dia atual
   const todayWorkout = workouts.find((day) => day.id === activeWorkoutId);
+
+  // Define quais treinos serão renderizados com base na configuração do usuário
+  const workoutsToRender = showTodayWorkoutOnly
+    ? todayWorkout
+      ? [todayWorkout]
+      : []
+    : workouts;
 
   // Função auxiliar para renderizar a estrutura de um treino
   const renderWorkout = (workout) => (
@@ -162,10 +171,8 @@ const WorkoutsPage = () => {
       <div className="max-w-[600px] w-full mx-auto pb-6">
         <Header />
 
-        {!showTodayWorkoutOnly && workouts.length > 0 ? (
-          workouts.map((workout) => renderWorkout(workout))
-        ) : todayWorkout ? (
-          renderWorkout(todayWorkout)
+        {workoutsToRender.length > 0 ? (
+          workoutsToRender.map(renderWorkout)
         ) : (
           <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 text-center mt-6">
             <h3 className="text-lg font-bold text-slate-800 mb-2">

@@ -14,7 +14,7 @@ import {
 } from "react-icons/fi";
 import {Input} from "@/components/Input";
 import {Button} from "@/components/Button";
-import {notifySuccess, notifyError} from "@/components/Notify";
+import {notifySuccess, notifyError, notifyWarn} from "@/components/Notify";
 import {useConfirmDialog} from "@/hooks/useConfirmDialog";
 import {useEscapeKey} from "@/hooks/useEscapeKey";
 import {AuthContext} from "@/context/AuthContext";
@@ -122,32 +122,36 @@ const TrackingPage = () => {
           {history: updated},
           {merge: true},
         );
-        alert("Avaliação salva com sucesso!");
+        notifySuccess("Avaliação salva com sucesso!");
       } catch (error) {
         console.error("Erro ao salvar avaliação:", error);
-        alert("Erro ao salvar a avaliação.");
+        notifyError("Erro ao salvar a avaliação.");
       }
     } else {
-      alert("Você precisa estar logado para salvar.");
+      notifyWarn("Você precisa estar logado para salvar.");
     }
 
     setIsEditing(false);
     setCurrentEval(null);
   };
 
-  const handleDeleteEval = async (id, e) => {
+  const handleDeleteEval = (id, e) => {
     e.stopPropagation(); // Evita abrir o modo de edição ao clicar na lixeira
-    if (window.confirm("Deseja realmente excluir esta avaliação?")) {
-      const updated = evaluations.filter((ev) => ev.id !== id);
-      setEvaluations(updated);
-      if (user?.uid) {
-        try {
-          await setDoc(doc(db, "evaluations", user.uid), {history: updated});
-        } catch (error) {
-          console.error("Erro ao excluir avaliação:", error);
+    confirmDialog.openAlert(async () => {
+      try {
+        const updated = evaluations.filter((ev) => ev.id !== id);
+        if (user?.uid) {
+          await setDoc(doc(db, "evaluations", user.uid), {
+            history: updated,
+          });
         }
+        setEvaluations(updated);
+        notifySuccess("Avaliação excluída com sucesso!");
+      } catch (error) {
+        console.error("Erro ao excluir avaliação:", error);
+        notifyError("Erro ao excluir a avaliação.");
       }
-    }
+    });
   };
 
   const handlePhotoUpload = (e) => {
