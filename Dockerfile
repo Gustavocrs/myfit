@@ -28,6 +28,9 @@ RUN npm ci --legacy-peer-deps
 # Copiar código fonte
 COPY . .
 
+# Garantir que o diretório public exista, mesmo que vazio, para evitar falhas no COPY
+RUN mkdir -p public
+
 # Build da aplicação
 RUN npm run build
 
@@ -46,6 +49,7 @@ RUN apk add --no-cache dumb-init
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.mjs ./
 COPY --from=builder /app/package*.json ./
 
 # Criar diretório de uploads com permissões apropriadas
