@@ -12,6 +12,7 @@ services:
       - "3002:3000"
     environment:
       NODE_ENV: production
+    init: true
     volumes:
       # Persistir uploads entre reinicializações do container
       - uploads_volume:/app/public/uploads

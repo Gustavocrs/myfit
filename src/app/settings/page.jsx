@@ -20,6 +20,7 @@ import {
 import {AuthContext} from "@/context/AuthContext";
 import {ThemeContext} from "@/context/ThemeContext";
 import exercisesData from "@/data/exercises.json";
+import {exercicioPertenceAoGrupo} from "@/utils/gruposMusculares";
 import {db} from "@/lib/firebase";
 import {doc, getDoc, setDoc} from "firebase/firestore";
 
@@ -207,8 +208,8 @@ const SettingsPage = () => {
       let sections = [];
       dayConf.areas.forEach((area) => {
         let selectedForArea = [];
-        const matching = exercisesData.filter(
-          (ex) => ex.muscleGroup === area || ex.muscle === area,
+        const matching = exercisesData.filter((ex) =>
+          exercicioPertenceAoGrupo(ex, area),
         );
 
         if (dayConf.selectedExercises?.[area]?.length > 0) {
@@ -227,7 +228,7 @@ const SettingsPage = () => {
         if (selectedForArea.length > 0) {
           sections.push({
             label: `Foco: ${area}`,
-            exercises: selectedForArea,
+            exercises: selectedForArea.map((ex) => ({...ex, muscle: area})),
           });
         }
       });
@@ -297,8 +298,8 @@ const SettingsPage = () => {
     let sections = [];
     workoutConfig.areas.forEach((area) => {
       let selectedForArea = [];
-      const matching = exercisesData.filter(
-        (ex) => ex.muscleGroup === area || ex.muscle === area,
+      const matching = exercisesData.filter((ex) =>
+        exercicioPertenceAoGrupo(ex, area),
       );
 
       if (workoutConfig.selectedExercises?.[area]?.length > 0) {
@@ -323,7 +324,7 @@ const SettingsPage = () => {
       if (selectedForArea.length > 0) {
         sections.push({
           label: `Foco: ${area}`,
-          exercises: selectedForArea,
+          exercises: selectedForArea.map((ex) => ({...ex, muscle: area})),
         });
       }
     });
@@ -602,9 +603,7 @@ const SettingsPage = () => {
                 <div className="flex flex-col gap-3 mt-3">
                   {workoutConfig.areas.map((area) => {
                     const options = exercisesData
-                      .filter(
-                        (ex) => ex.muscleGroup === area || ex.muscle === area,
-                      )
+                      .filter((ex) => exercicioPertenceAoGrupo(ex, area))
                       .map((ex) => ({label: ex.name, value: ex.id}));
                     return (
                       <Input

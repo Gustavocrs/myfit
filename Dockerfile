@@ -49,9 +49,6 @@ WORKDIR /app
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Instalar dumb-init para gerenciar processos
-RUN apk add --no-cache dumb-init
-
 # Copiar dependências do builder (apenas as usadas em produção)
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
@@ -76,9 +73,6 @@ EXPOSE 3000
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:3000/ || exit 1
-
-# Usar dumb-init para executar o app
-ENTRYPOINT ["dumb-init", "--"]
 
 # Iniciar a aplicação
 CMD ["npm", "start"]

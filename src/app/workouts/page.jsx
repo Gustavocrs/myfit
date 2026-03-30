@@ -9,6 +9,7 @@ import Loading from "@/components/Loading";
 import {AuthContext} from "@/context/AuthContext";
 import {notifyError, notifySuccess} from "@/components/Notify";
 import {db} from "@/lib/firebase";
+import {obterGrupoMuscularExibicao} from "@/utils/gruposMusculares";
 import {doc, getDoc, setDoc} from "firebase/firestore";
 import Link from "next/link";
 
@@ -159,7 +160,13 @@ const WorkoutsPage = () => {
               key={exIdx}
               name={ex.name}
               meta={ex.meta || ex.defaultMeta}
-              muscle={ex.muscle || ex.muscleGroup}
+              muscle={obterGrupoMuscularExibicao(
+                ex,
+                section.label.replace(/^👑\s*Foco:\s*/, "").replace(
+                  /^Foco:\s*/,
+                  "",
+                ),
+              )}
               rest={ex.rest || ex.restTime}
               detail={ex.detail || ex.details}
               color={ex.color}

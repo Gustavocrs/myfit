@@ -1,4 +1,5 @@
 import exercisesData from "@/data/exercises.json";
+import {exercicioPertenceAoGrupo} from "@/utils/gruposMusculares";
 
 /**
  * Define o volume de exercícios baseado na experiência do usuário.
@@ -34,7 +35,9 @@ const getMetaByGoal = (goal) => {
  * Seleciona exercícios aleatórios do banco baseando-se no grupo muscular e volume.
  */
 const getRandomExercises = (muscle, count) => {
-  const filtered = exercisesData.filter((e) => e.muscleGroup === muscle);
+  const filtered = exercisesData.filter((e) =>
+    exercicioPertenceAoGrupo(e, muscle),
+  );
   const shuffled = filtered.sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
 };
@@ -173,7 +176,7 @@ export const generateWorkout = (config, trackingData = {}) => {
         name: `${allExercises.length + idx + 1}. ${ex.name.replace(/^\d+\.\s*/, "")}`, // Remove numeração antiga e reinsere ordenado
         meta: defaultMeta,
         rest: defaultRest,
-        muscle: ex.muscleGroup, // Adaptando a prop para o componente <ExerciseCard />
+        muscle, // Preserva o grupo atual da seção mesmo quando o exercício pertence a múltiplos grupos
       }));
 
       allExercises = [...allExercises, ...selected];
