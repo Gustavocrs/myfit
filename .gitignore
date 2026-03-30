@@ -39,7 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# others
 IA.rules.md
 IA.*
 firestore.rules
 FIREBASE_RULES.md
+/docs
