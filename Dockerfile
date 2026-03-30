@@ -33,7 +33,7 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/package*.json ./
 
 # Criar diretório de uploads com permissões apropriadas
-RUN mkdir -p /app/public/uploads && chmod -R 777 /app/public/uploads
+RUN mkdir -p /app/public/uploads
 
 # Criar usuário não-root para segurança
 RUN addgroup -g 1001 -S nodejs && adduser -S nextjs -u 1001
