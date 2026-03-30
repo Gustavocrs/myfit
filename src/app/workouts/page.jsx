@@ -7,6 +7,7 @@ import SectionLabel from "@/components/SectionLabel";
 import ExerciseCard from "@/components/ExerciseCard";
 import Loading from "@/components/Loading";
 import {AuthContext} from "@/context/AuthContext";
+import {ThemeContext} from "@/context/ThemeContext";
 import {db} from "@/lib/firebase";
 import {doc, getDoc, setDoc} from "firebase/firestore";
 import Link from "next/link";
@@ -17,6 +18,7 @@ const WorkoutsPage = () => {
   const [activeWorkoutId, setActiveWorkoutId] = useState(null);
   const [showTodayWorkoutOnly, setShowTodayWorkoutOnly] = useState(false);
   const {user} = useContext(AuthContext);
+  const {syncWithFirebase} = useContext(ThemeContext);
 
   // Simula o carregamento dos dados do treino ao montar o componente.
   useEffect(() => {
@@ -24,6 +26,9 @@ const WorkoutsPage = () => {
       setLoading(true);
       try {
         if (user?.uid) {
+          // Sincroniza o tema com Firebase
+          await syncWithFirebase(user);
+
           const docRef = doc(db, "workoutPlans", user.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists() && docSnap.data().plans?.length > 0) {
@@ -38,11 +43,6 @@ const WorkoutsPage = () => {
             setShowTodayWorkoutOnly(
               settingsSnap.data().showTodayWorkoutOnly || false,
             );
-            if (settingsSnap.data().isDarkMode) {
-              document.documentElement.classList.add("dark");
-            } else {
-              document.documentElement.classList.remove("dark");
-            }
           }
         } else {
           setWorkouts([]);
@@ -74,7 +74,7 @@ const WorkoutsPage = () => {
       }
     };
     fetchWorkouts();
-  }, [user]);
+  }, [user, syncWithFirebase]);
 
   /**
    * Atualiza o meta (séries/repetições) de um exercício específico no estado.

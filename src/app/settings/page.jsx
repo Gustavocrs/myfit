@@ -5,6 +5,10 @@ import Header from "@/components/Header";
 import {Switch} from "@/components/Switch";
 import {Button} from "@/components/Button";
 import {Input} from "@/components/Input";
+import MuscleGroupsSummary from "@/components/MuscleGroupsSummary";
+import AlertDialog from "@/components/AlertDialog";
+import {notifySuccess, notifyError} from "@/components/Notify";
+import {useConfirmDialog} from "@/hooks/useConfirmDialog";
 import {
   FiMoon,
   FiTrash2,
@@ -14,6 +18,7 @@ import {
   FiEdit2,
 } from "react-icons/fi";
 import {AuthContext} from "@/context/AuthContext";
+import {ThemeContext} from "@/context/ThemeContext";
 import exercisesData from "@/data/exercises.json";
 import {db} from "@/lib/firebase";
 import {doc, getDoc, setDoc} from "firebase/firestore";
@@ -30,7 +35,8 @@ const MUSCLE_GROUPS = [
 ];
 
 const SettingsPage = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const {isDarkMode, toggleDarkMode, syncWithFirebase} =
+    useContext(ThemeContext);
   const [showTodayWorkoutOnly, setShowTodayWorkoutOnly] = useState(false);
   const [showWorkoutForm, setShowWorkoutForm] = useState(false);
   const [workoutConfig, setWorkoutConfig] = useState({
@@ -44,11 +50,15 @@ const SettingsPage = () => {
   const [savedWorkouts, setSavedWorkouts] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [pendingDays, setPendingDays] = useState([]); // Guarda os dias durante a criação
+  const confirmDialog = useConfirmDialog();
 
   useEffect(() => {
     const fetchSavedWorkoutsAndSettings = async () => {
       if (user?.uid) {
         try {
+          // Sincroniza o tema com Firebase
+          await syncWithFirebase(user);
+
           const docRef = doc(db, "workoutPlans", user.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists() && docSnap.data().plans) {
@@ -63,10 +73,6 @@ const SettingsPage = () => {
             setShowTodayWorkoutOnly(
               settingsSnap.data().showTodayWorkoutOnly || false,
             );
-            const dark = settingsSnap.data().isDarkMode || false;
-            setIsDarkMode(dark);
-            if (dark) document.documentElement.classList.add("dark");
-            else document.documentElement.classList.remove("dark");
           }
         } catch (error) {
           console.error("Erro ao buscar dados do Firebase:", error);
@@ -74,7 +80,7 @@ const SettingsPage = () => {
       }
     };
     fetchSavedWorkoutsAndSettings();
-  }, [user]);
+  }, [user, syncWithFirebase]);
 
   const handleShowTodayWorkoutOnlyToggle = async () => {
     const newValue = !showTodayWorkoutOnly;
@@ -88,19 +94,8 @@ const SettingsPage = () => {
     }
   };
 
-  const handleDarkModeToggle = async () => {
-    const newValue = !isDarkMode;
-    setIsDarkMode(newValue);
-    if (newValue) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
-
-    if (user?.uid) {
-      await setDoc(
-        doc(db, "userSettings", user.uid),
-        {isDarkMode: newValue},
-        {merge: true},
-      );
-    }
+  const handleDarkModeToggle = () => {
+    toggleDarkMode(user);
   };
 
   const handleLogout = async () => {
@@ -167,7 +162,7 @@ const SettingsPage = () => {
       !workoutConfig.day ||
       workoutConfig.areas.length === 0
     ) {
-      alert(
+      notifyError(
         "Por favor, preencha o nome, selecione o dia e pelo menos uma área.",
       );
       return;
@@ -284,7 +279,7 @@ const SettingsPage = () => {
       }
     }
 
-    alert("Ficha de treino gerada e salva com sucesso!");
+    notifySuccess("Ficha de treino gerada e salva com sucesso!");
 
     setShowWorkoutForm(false);
     setPendingDays([]);
@@ -304,7 +299,7 @@ const SettingsPage = () => {
       !workoutConfig.day ||
       workoutConfig.areas.length === 0
     ) {
-      alert(
+      notifyError(
         "Por favor, preencha o nome, selecione o dia e pelo menos uma área.",
       );
       return;
@@ -372,7 +367,7 @@ const SettingsPage = () => {
       }
     }
 
-    alert("Treino atualizado com sucesso!");
+    notifySuccess("Treino atualizado com sucesso!");
 
     setShowWorkoutForm(false);
     setEditingIndex(null);
@@ -386,21 +381,28 @@ const SettingsPage = () => {
   };
 
   const handleDeleteWorkout = async (index) => {
-    if (window.confirm("Tem certeza que deseja excluir este treino?")) {
+    confirmDialog.openAlert(async () => {
       const updated = savedWorkouts.filter((_, i) => i !== index);
       setSavedWorkouts(updated);
       if (user?.uid) {
         try {
           await setDoc(doc(db, "workoutPlans", user.uid), {plans: updated});
+          notifySuccess("Treino excluído com sucesso!");
         } catch (error) {
           console.error("Erro ao excluir no Firebase:", error);
+          notifyError("Erro ao excluir o treino.");
         }
       }
-    }
+    });
   };
 
   return (
     <main className="min-h-screen bg-slate-100 py-3 px-3">
+      <AlertDialog
+        state={confirmDialog.alertState}
+        setState={confirmDialog.closeAlert}
+        onEdit={confirmDialog.onEdit}
+      />
       <div className="max-w-[600px] w-full mx-auto pb-6">
         <Header />
         <h2 className="text-[1.1rem] font-extrabold text-slate-800 uppercase mb-4 mt-6">
@@ -641,48 +643,61 @@ const SettingsPage = () => {
                   </Button>
 
                   {pendingDays.length > 0 && (
-                    <div className="flex flex-col gap-2 mt-2 border-t border-slate-100 pt-3">
+                    <div className="flex flex-col gap-3 mt-2 border-t border-slate-100 pt-3">
                       <h4 className="text-[0.8rem] font-bold text-slate-500 uppercase">
                         Dias Adicionados
                       </h4>
-                      {pendingDays.map((pd, i) => (
-                        <div
-                          key={i}
-                          className="flex justify-between items-center bg-slate-50 p-3 rounded-md border border-slate-200"
-                        >
-                          <div className="flex flex-col">
-                            <span className="font-bold text-slate-700 text-[0.85rem]">
-                              {pd.day} - {pd.name}
-                            </span>
-                            <span className="text-[0.75rem] text-slate-500 font-medium">
-                              {pd.areas
-                                .map(
-                                  (a) =>
-                                    `${a} (${
-                                      pd.selectedExercises?.[a]?.length ||
-                                      pd.areaCounts?.[a] ||
-                                      3
-                                    })`,
-                                )
-                                .join(" • ")}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <button
-                              onClick={() => handleEditPendingDay(i)}
-                              className="p-2 text-slate-400 hover:text-orange-500 transition-colors"
+
+                      {/* Layout em duas colunas: Dias e Resumo de Grupos */}
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        {/* Coluna 1: Lista de Dias */}
+                        <div className="flex flex-col gap-2">
+                          {pendingDays.map((pd, i) => (
+                            <div
+                              key={i}
+                              className="flex justify-between items-center bg-slate-50 p-3 rounded-md border border-slate-200"
                             >
-                              <FiEdit2 size={16} />
-                            </button>
-                            <button
-                              onClick={() => handleRemovePendingDay(i)}
-                              className="text-red-500 hover:text-red-700 p-2"
-                            >
-                              <FiTrash2 size={16} />
-                            </button>
+                              <div className="flex flex-col">
+                                <span className="font-bold text-slate-700 text-[0.85rem]">
+                                  {pd.day} - {pd.name}
+                                </span>
+                              </div>
+                              <div className="flex items-center">
+                                <button
+                                  onClick={() => handleEditPendingDay(i)}
+                                  className="p-2 text-slate-400 hover:text-orange-500 transition-colors"
+                                >
+                                  <FiEdit2 size={16} />
+                                </button>
+                                <button
+                                  onClick={() => handleRemovePendingDay(i)}
+                                  className="text-red-500 hover:text-red-700 p-2"
+                                >
+                                  <FiTrash2 size={16} />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Coluna 2: Resumo de Grupos Musculares */}
+                        <div className="bg-slate-50 p-4 rounded-md border border-slate-200">
+                          <div className="flex flex-col gap-3">
+                            {pendingDays.map((pd, i) => (
+                              <div key={i} className="flex flex-col gap-1">
+                                <span className="text-[0.75rem] font-bold text-slate-600 uppercase tracking-wider">
+                                  {pd.day} - {pd.name}
+                                </span>
+                                <MuscleGroupsSummary
+                                  areas={pd.areas}
+                                  selectedExercises={pd.selectedExercises}
+                                  areaCounts={pd.areaCounts}
+                                />
+                              </div>
+                            ))}
                           </div>
                         </div>
-                      ))}
+                      </div>
                     </div>
                   )}
 

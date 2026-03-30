@@ -33,9 +33,11 @@ export const AuthProvider = ({children}) => {
   const signInWithGoogle = useCallback(async () => {
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      return result.user;
     } catch (error) {
       console.error("Erro ao fazer login com Google:", error);
+      throw error;
     }
   }, []);
 

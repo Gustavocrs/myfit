@@ -1,7 +1,9 @@
 import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import {AuthProvider} from "@/context/AuthContext";
+import {ThemeProvider} from "@/context/ThemeContext";
 import ProtectedLayout from "@/components/ProtectedLayout";
+import {Notify} from "@/components/Notify";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,10 +26,28 @@ const RootLayout = ({children}) => {
       lang="pt-br"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        {/* Script para carregar tema antes de renderizar (evita flash) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const isDarkMode = localStorage.getItem("isDarkMode");
+                if (isDarkMode === "true") {
+                  document.documentElement.classList.add("dark");
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <AuthProvider>
-        <body>
-          <ProtectedLayout>{children}</ProtectedLayout>
-        </body>
+        <ThemeProvider>
+          <body>
+            <ProtectedLayout>{children}</ProtectedLayout>
+            <Notify />
+          </body>
+        </ThemeProvider>
       </AuthProvider>
     </html>
   );

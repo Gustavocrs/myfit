@@ -2,6 +2,7 @@
 
 import {useState, useEffect, useContext} from "react";
 import Header from "@/components/Header";
+import AlertDialog from "@/components/AlertDialog";
 import {
   FiSave,
   FiCamera,
@@ -13,7 +14,11 @@ import {
 } from "react-icons/fi";
 import {Input} from "@/components/Input";
 import {Button} from "@/components/Button";
+import {notifySuccess, notifyError} from "@/components/Notify";
+import {useConfirmDialog} from "@/hooks/useConfirmDialog";
+import {useEscapeKey} from "@/hooks/useEscapeKey";
 import {AuthContext} from "@/context/AuthContext";
+import {ThemeContext} from "@/context/ThemeContext";
 import {db} from "@/lib/firebase";
 import {doc, getDoc, setDoc} from "firebase/firestore";
 
@@ -23,6 +28,8 @@ const TrackingPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentEval, setCurrentEval] = useState(null);
   const {user} = useContext(AuthContext);
+  const {syncWithFirebase} = useContext(ThemeContext);
+  const confirmDialog = useConfirmDialog();
 
   useEffect(() => {
     const fetchEvals = async () => {
@@ -156,6 +163,11 @@ const TrackingPage = () => {
 
   return (
     <main className="min-h-screen bg-slate-100 py-3 px-3">
+      <AlertDialog
+        state={confirmDialog.alertState}
+        setState={confirmDialog.closeAlert}
+        onEdit={confirmDialog.onEdit}
+      />
       <div className="max-w-[600px] w-full mx-auto pb-6">
         <Header />
 

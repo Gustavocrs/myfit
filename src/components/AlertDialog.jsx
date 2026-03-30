@@ -9,6 +9,7 @@ import useRequest from "@/hooks/useRequest";
 import {Notify, notifyError, notifySuccess} from "./Notify";
 import {useRouter} from "next/navigation";
 import {checkPermission} from "@/utils/checkPermission";
+import {useEscapeKey} from "@/hooks/useEscapeKey";
 
 export default function AlertDialog({
   state,
@@ -28,6 +29,9 @@ export default function AlertDialog({
   const handleClose = () => {
     setState(false);
   };
+
+  // Fechar diálogo ao pressionar Escape
+  useEscapeKey(handleClose);
   const handleExcluirRegistro = async (url) => {
     try {
       if (hasPermission) {
