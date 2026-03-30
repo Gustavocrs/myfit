@@ -6,8 +6,8 @@ WORKDIR /app
 # Copiar package files
 COPY package*.json ./
 
-# Instalar dependências (usa .npmrc para legacy-peer-deps)
-RUN npm ci
+# Instalar dependências com a flag explícita (substitui a necessidade do .npmrc)
+RUN npm ci --legacy-peer-deps
 
 # Copiar código fonte
 COPY . .
@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Remover dependências de desenvolvimento para otimizar a imagem final
-RUN npm prune --production
+RUN npm prune --production --legacy-peer-deps
 
 # Etapa 2: Runtime (otimizado)
 FROM node:20-alpine
