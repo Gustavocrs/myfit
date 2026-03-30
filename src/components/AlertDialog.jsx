@@ -8,7 +8,6 @@ import DialogTitle from "@mui/material/DialogTitle";
 import useRequest from "@/hooks/useRequest";
 import {Notify, notifyError, notifySuccess} from "./Notify";
 import {useRouter} from "next/navigation";
-import {checkPermission} from "@/utils/checkPermission";
 import {useEscapeKey} from "@/hooks/useEscapeKey";
 
 export default function AlertDialog({
@@ -24,7 +23,6 @@ export default function AlertDialog({
 }) {
   const {del, patch, error, loading} = useRequest();
   const router = useRouter();
-  const hasPermission = checkPermission();
 
   const handleClose = () => {
     setState(false);
@@ -34,16 +32,12 @@ export default function AlertDialog({
   useEscapeKey(handleClose);
   const handleExcluirRegistro = async (url) => {
     try {
-      if (hasPermission) {
-        const response = await del(`${url}`);
-        setReload(true);
+      const response = await del(`${url}`);
+      setReload(true);
 
-        if (response.data) {
-          setState(false);
-          notifySuccess(response.data.message);
-        }
-      } else {
-        notifyError(errorMsg);
+      if (response.data) {
+        setState(false);
+        notifySuccess(response.data.message);
       }
     } catch {
       console.log("Erro ao buscar:", error);
