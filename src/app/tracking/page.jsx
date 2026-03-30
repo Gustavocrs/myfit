@@ -107,28 +107,58 @@ const TrackingPage = () => {
   };
 
   const handleSaveEval = async () => {
-    let updated;
-    const existingIdx = evaluations.findIndex((e) => e.id === currentEval.id);
-    if (existingIdx >= 0) {
-      updated = [...evaluations];
-      updated[existingIdx] = currentEval;
-    } else {
-      updated = [currentEval, ...evaluations]; // Nova sempre em primeiro
-    }
-
-    setEvaluations(updated.sort((a, b) => new Date(b.date) - new Date(a.date))); // Garante que a lista esteja ordenada por data, mais recente primeiro.
-
     if (user?.uid) {
       try {
+        const evalData = {...currentEval};
+
+        // 1. Separa os arquivos novos das URLs existentes
+        const newFiles = evalData.photos.filter((p) => p instanceof File);
+        const existingUrls = evalData.photos.filter(
+          (p) => typeof p === "string",
+        );
+
+        let uploadedUrls = [];
+        if (newFiles.length > 0) {
+          const formData = new FormData();
+          newFiles.forEach((file) => formData.append("files", file));
+
+          // 2. Envia os novos arquivos para a API de upload
+          const response = await fetch("/api/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          const result = await response.json();
+          if (!result.success) {
+            throw new Error(result.message || "Falha no upload das imagens.");
+          }
+          uploadedUrls = result.urls;
+        }
+
+        // 3. Combina as URLs antigas e as novas para salvar no DB
+        evalData.photos = [...existingUrls, ...uploadedUrls];
+
+        // 4. Atualiza o histórico de avaliações
+        const existingIdx = evaluations.findIndex((e) => e.id === evalData.id);
+        let updatedHistory = [...evaluations];
+        if (existingIdx >= 0) {
+          updatedHistory[existingIdx] = evalData;
+        } else {
+          updatedHistory.unshift(evalData);
+        }
+        updatedHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+
         await setDoc(
           doc(db, "evaluations", user.uid),
-          {history: updated},
+          {history: updatedHistory},
           {merge: true},
         );
+
+        setEvaluations(updatedHistory);
         notifySuccess("Avaliação salva com sucesso!");
       } catch (error) {
         console.error("Erro ao salvar avaliação:", error);
-        notifyError("Erro ao salvar a avaliação.");
+        notifyError(error.message || "Erro ao salvar a avaliação.");
       }
     } else {
       notifyWarn("Você precisa estar logado para salvar.");
@@ -160,19 +190,10 @@ const TrackingPage = () => {
   const handlePhotoUpload = async (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
-      const newPhotoPreviews = await Promise.all(
-        files.map((file) => {
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result);
-            reader.readAsDataURL(file);
-          });
-        }),
-      );
       setCurrentEval((prev) => ({
         ...prev,
-        // Concatena as novas fotos com as existentes
-        photos: [...(prev.photos || []), ...newPhotoPreviews],
+        // Adiciona os File objects diretamente ao estado
+        photos: [...(prev.photos || []), ...files],
       }));
     }
   };
@@ -547,8 +568,8 @@ const TrackingPage = () => {
                   <input
                     type="file"
                     accept="image/*"
-                    capture="environment"
                     className="hidden"
+                    multiple
                     onChange={handlePhotoUpload}
                   />
                 </label>
@@ -559,22 +580,30 @@ const TrackingPage = () => {
                       Pré-visualização:
                     </span>
                     <div className="grid grid-cols-2 gap-4">
-                      {(currentEval.photos || []).map((photo, index) => (
-                        <div key={index} className="relative">
-                          <img
-                            src={photo}
-                            alt={`Shape atual ${index + 1}`}
-                            className="w-full h-auto object-cover rounded-lg shadow-sm border border-slate-200"
-                          />
-                          <button
-                            onClick={() => handleRemovePhoto(index)}
-                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors"
-                            aria-label={`Remover foto ${index + 1}`}
-                          >
-                            <FiTrash2 size={16} />
-                          </button>
-                        </div>
-                      ))}
+                      {(currentEval.photos || []).map((photo, index) => {
+                        // Se for um File, cria uma URL temporária para preview. Se for string, já é uma URL.
+                        const previewUrl =
+                          photo instanceof File
+                            ? URL.createObjectURL(photo)
+                            : photo;
+
+                        return (
+                          <div key={index} className="relative">
+                            <img
+                              src={previewUrl}
+                              alt={`Shape atual ${index + 1}`}
+                              className="w-full h-auto object-cover rounded-lg shadow-sm border border-slate-200"
+                            />
+                            <button
+                              onClick={() => handleRemovePhoto(index)}
+                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 shadow-md hover:bg-red-600 transition-colors"
+                              aria-label={`Remover foto ${index + 1}`}
+                            >
+                              <FiTrash2 size={16} />
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
