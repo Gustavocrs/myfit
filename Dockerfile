@@ -15,6 +15,9 @@ COPY . .
 # Build da aplicação
 RUN npm run build
 
+# Remover dependências de desenvolvimento para otimizar a imagem final
+RUN npm prune --production
+
 # Etapa 2: Runtime (otimizado)
 FROM node:20-alpine
 
