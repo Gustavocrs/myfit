@@ -8,11 +8,12 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1 \
     NPM_CONFIG_AUDIT=false \
     NPM_CONFIG_FUND=false \
-    NPM_CONFIG_FETCH_RETRIES=5 \
+    NPM_CONFIG_FETCH_RETRIES=3 \
     NPM_CONFIG_FETCH_RETRY_FACTOR=2 \
-    NPM_CONFIG_FETCH_RETRY_MINTIMEOUT=20000 \
-    NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=120000 \
-    NPM_CONFIG_FETCH_TIMEOUT=600000 \
+    NPM_CONFIG_FETCH_RETRY_MINTIMEOUT=10000 \
+    NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=60000 \
+    NPM_CONFIG_FETCH_TIMEOUT=120000 \
+    NPM_CONFIG_LOGLEVEL=verbose \
     NPM_CONFIG_MAXSOCKETS=1 \
     NPM_CONFIG_UPDATE_NOTIFIER=false
 
@@ -24,7 +25,7 @@ COPY .npmrc ./
 
 # Instalar dependências com cache persistente do npm para reduzir timeout de rede
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --legacy-peer-deps --prefer-offline --progress=false
+    npm ci --legacy-peer-deps --prefer-offline --verbose
 
 FROM base AS builder
 
